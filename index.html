@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i-System Pro | التقسيط الذكي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0f1217;
+            --card-bg: #1c2128;
+            --accent-orange: #ff6b35; 
+            --text-main: #ffffff;
+            --text-dim: #e0e0e0; 
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin-bottom: 90px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        label, .section-title { 
+            color: #ffffff !important; 
+            font-weight: 600 !important;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: block;
+            opacity: 1 !important;
+        }
+
+        .form-control { 
+            background: #24292f !important; 
+            border: 1px solid #3d444d !important; 
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            padding: 12px !important;
+        }
+
+        .btn-action {
+            background: var(--accent-orange);
+            color: white; border: none; border-radius: 15px;
+            padding: 15px; font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(28, 33, 40, 0.98);
+            backdrop-filter: blur(15px);
+            display: flex; justify-content: space-around;
+            padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item { color: #8b949e; text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
+        .nav-item.active { color: var(--accent-orange); font-weight: bold; }
+        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+
+        .status-paid { color: var(--success-green); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; }
+        .status-unpaid { color: var(--error-red); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; }
+
+        .client-row {
+            background: #24292f; border-radius: 15px;
+            margin-bottom: 12px; padding: 18px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .section-title { 
+            color: var(--accent-orange) !important; 
+            border-right: 4px solid var(--accent-orange); 
+            padding-right: 12px; 
+            margin: 20px 0 15px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="p-4 mt-5">
+    <div class="stat-card text-center shadow-lg">
+        <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
+        </div>
+        <h4 class="fw-bold">نظام i-System</h4>
+        <label class="mt-2 text-center w-100">الرجاء إدخال رمز الوصول</label>
+        <input type="password" id="passInput" class="form-control text-center my-4 fs-4" placeholder="••••">
+        <button onclick="login()" class="btn btn-action w-100">تسجيل الدخول</button>
+    </div>
+</div>
+
+<div id="mainContent" style="display: none;">
+    <section id="homeSection" class="p-3">
+        <div class="stat-card text-center border-0" style="background: linear-gradient(145deg, #1c2128, #111418);">
+            <label class="text-center w-100">إجمالي المحفظة الاستثمارية</label>
+            <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
+            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">عدد العملاء: <span id="clientsCount">0</span></div>
+        </div>
+        <h6 class="fw-bold mb-3 mt-4"><i class="bi bi-people-fill me-2"></i> سجل العملاء</h6>
+        <div id="clientsList"></div>
+    </section>
+
+    <section id="addClientSection" class="p-3" style="display:none;">
+        <h5 class="fw-bold mb-3">فتح ملف استثماري</h5>
+        <div class="stat-card">
+            <form id="clientForm">
+                <div class="section-title">بيانات العميل الأساسية</div>
+                <label>الاسم الرباعي</label>
+                <input type="text" id="cName" class="form-control mb-3" placeholder="أدخل اسم العميل" required>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label>رقم الهوية</label><input type="text" id="cID" class="form-control" placeholder="10xxxxxxxx" required></div>
+                    <div class="col-6"><label>رقم الجوال</label><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
+                </div>
+
+                <div class="section-title">معلومات الكفيل الضامن</div>
+                <label>اسم الكفيل</label>
+                <input type="text" id="gName" class="form-control mb-3" placeholder="أدخل اسم الكفيل">
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label>هوية الكفيل</label><input type="text" id="gID" class="form-control" placeholder="هوية الكفيل"></div>
+                    <div class="col-6"><label>جوال الكفيل</label><input type="text" id="gPhone" class="form-control" placeholder="جوال الكفيل"></div>
+                </div>
+
+                <div class="section-title">الخطة المالية</div>
+                <div class="row g-2 mb-2">
+                    <div class="col-6"><label>مبلغ الاستثمار</label><input type="number" id="amount" class="form-control" placeholder="0.00" required></div>
+                    <div class="col-6"><label>مدة الأقساط (أشهر)</label><input type="number" id="instCount" class="form-control" placeholder="12" required></div>
+                </div>
+                <label>تاريخ استحقاق أول قسط</label>
+                <input type="date" id="startDate" class="form-control mb-4" required>
+                
+                <button type="submit" class="btn btn-action w-100 shadow">إعتماد العميل والجدولة</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="detailsSection" class="p-3" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <button class="btn btn-dark rounded-circle" onclick="showSection('home')"><i class="bi bi-chevron-right text-white"></i></button>
+            <h6 class="fw-bold mb-0">كشف حساب إلكتروني</h6>
+            <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf-fill me-1"></i> PDF</button>
+        </div>
+        <div id="pdfArea">
+            <div id="clientDetailsContent"></div>
+        </div>
+    </section>
+
+    <section id="settingsSection" class="p-3" style="display:none;">
+        <div class="stat-card">
+            <h6 class="fw-bold mb-4"><i class="bi bi-key-fill me-2 text-warning"></i> حماية النظام</h6>
+            <label>تغيير رمز المرور الحالي</label>
+            <input type="password" id="newPass" class="form-control mb-3 text-center" placeholder="أدخل الرمز الجديد">
+            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الأمان</button>
+        </div>
+        <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0 shadow-sm"><i class="bi bi-box-arrow-left me-2"></i> تسجيل الخروج</button>
+    </section>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door-fill"></i>الرئيسية</div>
+        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square-fill"></i>إضافة</div>
+        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-shield-lock-fill"></i>الأمان</div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
+        authDomain: "myinstallmentsystem.firebaseapp.com",
+        projectId: "myinstallmentsystem",
+        storageBucket: "myinstallmentsystem.firebasestorage.app",
+        messagingSenderId: "1073933519716",
+        appId: "1:1073933519716:web:caac200c07e0356f81c871"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const clientsCol = collection(db, "clients");
+
+    let clients = [];
+    let systemPass = localStorage.getItem('systemPass') || '1955';
+
+    window.login = () => {
+        if (document.getElementById('passInput').value === systemPass) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            startListening();
+        } else { alert('عذراً، الرمز غير صحيح'); }
+    }
+
+    function startListening() {
+        onSnapshot(clientsCol, (snapshot) => {
+            clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderHome();
+        });
+    }
+
+    window.showSection = (sectionId) => {
+        ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(sectionId + 'Section').style.display = 'block';
+        if(document.getElementById('nav-' + sectionId)) document.getElementById('nav-' + sectionId).classList.add('active');
+        if(sectionId === 'home') renderHome();
+    }
+
+    document.getElementById('clientForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const amount = parseFloat(document.getElementById('amount').value);
+        const count = parseInt(document.getElementById('instCount').value);
+        const date = new Date(document.getElementById('startDate').value);
+        
+        let installments = [];
+        for(let i=0; i<count; i++) {
+            let d = new Date(date);
+            d.setMonth(d.getMonth() + i);
+            installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
+        }
+
+        const newClient = {
+            name: document.getElementById('cName').value,
+            idNum: document.getElementById('cID').value,
+            phone: document.getElementById('cPhone').value,
+            gName: document.getElementById('gName').value,
+            gID: document.getElementById('gID').value,
+            gPhone: document.getElementById('gPhone').value,
+            total: amount,
+            installments: installments
+        };
+
+        try {
+            await addDoc(clientsCol, newClient);
+            alert('تم اعتماد العميل وحفظه سحابياً بنجاح');
+            this.reset();
+            window.showSection('home');
+        } catch(err) {
+            alert('خطأ في حفظ البيانات سحابياً');
+        }
+    };
+
+    function renderHome() {
+        const list = document.getElementById('clientsList');
+        list.innerHTML = '';
+        let total = 0;
+        clients.forEach(c => {
+            total += parseFloat(c.total);
+            list.innerHTML += `
+                <div class="client-row shadow-sm">
+                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-dim">القيمة: ${c.total.toLocaleString()} ر.س</small></div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
+                    </div>
+                </div>`;
+        });
+        document.getElementById('totalInvestment').innerText = total.toLocaleString() + ' ر.س';
+        document.getElementById('clientsCount').innerText = clients.length;
+    }
+
+    window.viewClient = (id) => {
+        const client = clients.find(c => c.id === id);
+        let html = `
+            <div class="stat-card border-0 shadow-lg">
+                <h5 class="fw-bold text-white mb-2">${client.name}</h5>
+                <div class="row g-2 small text-dim mb-3 border-bottom border-secondary pb-3">
+                    <div class="col-6">الهوية: ${client.idNum}</div><div class="col-6 text-start">الجوال: ${client.phone}</div>
+                </div>
+                <div class="p-3 rounded bg-dark border border-secondary mb-3 shadow-inner">
+                    <label class="text-orange d-block mb-2 fw-bold" style="color: var(--accent-orange);">بيانات الضامن (الكفيل)</label>
+                    <div class="small text-white">الاسم: ${client.gName || 'غير متوفر'}</div>
+                    <div class="small text-white">الجوال: ${client.gPhone || 'غير متوفر'} | الهوية: ${client.gID || 'غير متوفر'}</div>
+                </div>
+                <table class="table table-dark table-borderless small mt-4">
+                    <thead><tr class="text-dim border-bottom border-secondary"><th>الاستحقاق</th><th>المبلغ</th><th>الحالة</th></tr></thead>
+                    <tbody>`;
+        client.installments.forEach((inst, index) => {
+            const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
+            html += `<tr><td class="py-3">${inst.dueDate}</td><td class="py-3">${inst.amount}</td><td class="py-3" onclick="togglePayment('${id}', ${index})" style="cursor:pointer"><span class="${sClass}">${inst.status} <i class="bi bi-arrow-repeat ms-1"></i></span></td></tr>`;
+        });
+        html += `</tbody></table></div>`;
+        document.getElementById('clientDetailsContent').innerHTML = html;
+        window.showSection('details');
+    }
+
+    window.togglePayment = async (clientId, index) => {
+        if(confirm("هل تريد تأكيد تغيير حالة الدفع لهذا القسط؟")) {
+            const client = clients.find(c => c.id === clientId);
+            client.installments[index].status = client.installments[index].status === 'مدفوع' ? 'غير مدفوع' : 'مدفوع';
+            const docRef = doc(db, "clients", clientId);
+            await updateDoc(docRef, { installments: client.installments });
+            window.viewClient(clientId);
+        }
+    }
+
+    window.deleteClient = async (id) => {
+        if(confirm("تحذير: هل أنت متأكد من حذف هذا العميل نهائياً من السحاب؟")) {
+            await deleteDoc(doc(db, "clients", id));
+        }
+    }
+
+    window.downloadPDF = () => {
+        const element = document.getElementById('pdfArea');
+        html2pdf().set({ 
+            margin: 10, 
+            filename: 'Statement_Export.pdf', 
+            html2canvas: { scale: 2, backgroundColor: '#0f1217' }, 
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+        }).from(element).save();
+    }
+
+    window.changePassword = () => {
+        const n = document.getElementById('newPass').value;
+        if(n.length < 4) return alert('خطأ: رمز المرور يجب أن لا يقل عن 4 أرقام');
+        localStorage.setItem('systemPass', n);
+        alert('تم تحديث رمز الحماية بنجاح');
+    }
+
+    window.logout = () => { location.reload(); }
+</script>
+</body>
+</html>
