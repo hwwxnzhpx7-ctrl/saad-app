@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | دخول آمن</title>
+    <title>i-System Pro | النظام المطور</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -13,9 +13,7 @@
             --card-bg: #1c2128;
             --accent-orange: #ff6b35; 
             --text-main: #ffffff;
-            --text-dim: #e0e0e0; 
-            --success-green: #2ecc71;
-            --error-red: #e74c3c;
+            --text-dim: #8b949e; 
         }
         body { 
             background-color: var(--bg-dark); 
@@ -23,25 +21,22 @@
             font-family: 'Segoe UI', sans-serif;
             margin-bottom: 90px;
         }
-        /* شاشة التحميل */
         #loader {
             position: fixed; inset: 0; background: var(--bg-dark);
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
         }
         .stat-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-        .form-control { 
-            background: #24292f !important; border: 1px solid #3d444d !important; 
-            border-radius: 12px !important; color: #ffffff !important; padding: 12px !important;
+            background: var(--card-bg); border-radius: 20px; padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
         }
         .btn-google {
             background: white; color: black; font-weight: bold;
             border-radius: 15px; padding: 15px; width: 100%; border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .form-control { 
+            background: #24292f !important; border: 1px solid #3d444d !important; 
+            border-radius: 12px !important; color: #ffffff !important; padding: 12px !important;
         }
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
@@ -52,24 +47,22 @@
         .nav-item { color: #8b949e; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
         .nav-item.active { color: var(--accent-orange); font-weight: bold; }
         .nav-item i { font-size: 1.5rem; display: block; }
-        .client-row {
-            background: #24292f; border-radius: 15px;
-            margin-bottom: 12px; padding: 18px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
     </style>
 </head>
 <body>
 
 <div id="loader">
     <div class="spinner-border text-warning mb-3"></div>
-    <p>جاري التحقق من الهوية...</p>
+    <p id="loaderText">جاري فحص حالة الدخول...</p>
 </div>
 
 <div id="loginPage" class="p-4 mt-5" style="display: none;">
     <div class="stat-card text-center">
-        <h4 class="fw-bold mb-4">i-System Pro</h4>
-        <p class="text-dim mb-4">يجب تسجيل الدخول لمتابعة حسابات العملاء</p>
+        <div class="mb-4">
+            <i class="bi bi-shield-lock-fill" style="font-size: 3rem; color: var(--accent-orange);"></i>
+        </div>
+        <h4 class="fw-bold mb-2">دخول النظام الآمن</h4>
+        <p class="text-dim mb-4 small">سجل دخولك بحساب قوقل للوصول لبياناتك</p>
         <button onclick="loginWithGoogle()" class="btn btn-google">
             <i class="bi bi-google me-2 text-danger"></i> الدخول عبر Google
         </button>
@@ -79,23 +72,22 @@
 <div id="mainContent" style="display: none;">
     <section id="homeSection" class="p-3">
         <div class="stat-card text-center">
-            <label>إجمالي المحفظة الاستثمارية</label>
+            <label class="text-dim small">إجمالي الاستثمارات</label>
             <h1 class="fw-bold my-2" id="totalInvestment">0</h1>
-            <div class="badge bg-dark p-2">عدد العملاء: <span id="clientsCount">0</span></div>
+            <div class="badge bg-dark">العملاء: <span id="clientsCount">0</span></div>
         </div>
         <div id="clientsList"></div>
     </section>
 
     <section id="addClientSection" class="p-3" style="display:none;">
-        <h5 class="fw-bold mb-3">إضافة عميل جديد</h5>
+        <h5 class="fw-bold mb-3">إضافة ملف جديد</h5>
         <div class="stat-card">
             <form id="clientForm">
                 <input type="text" id="cName" class="form-control mb-2" placeholder="اسم العميل" required>
                 <input type="text" id="cPhone" class="form-control mb-2" placeholder="رقم الجوال" required>
-                <input type="number" id="amount" class="form-control mb-2" placeholder="مبلغ البيع الإجمالي" required>
-                <input type="number" id="instCount" class="form-control mb-2" placeholder="عدد الأقساط" required>
-                <input type="date" id="startDate" class="form-control mb-3" required>
-                <button type="submit" class="btn btn-warning w-100 fw-bold py-3" style="border-radius: 15px;">إعتماد العقد</button>
+                <input type="number" id="amount" class="form-control mb-2" placeholder="المبلغ الإجمالي" required>
+                <input type="number" id="instCount" class="form-control mb-3" placeholder="عدد الأقساط" required>
+                <button type="submit" class="btn btn-warning w-100 fw-bold py-3" style="border-radius: 15px;">إضافة العميل</button>
             </form>
         </div>
     </section>
@@ -103,7 +95,7 @@
     <section id="settingsSection" class="p-3" style="display:none;">
         <div class="stat-card text-center">
             <p id="userEmailLabel" class="mb-4"></p>
-            <button onclick="logout()" class="btn btn-outline-danger w-100">تسجيل خروج</button>
+            <button onclick="logout()" class="btn btn-outline-danger w-100">خروج آمن</button>
         </div>
     </section>
 
@@ -116,7 +108,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getAuth, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut, getRedirectResult } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -132,41 +124,55 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
-    const clientsCol = collection(db, "clients");
     const ADMIN_EMAIL = "cssp2015@gmail.com";
 
-    // دالة الدخول (Redirect)
+    // دالة تسجيل الدخول
     window.loginWithGoogle = () => {
         signInWithRedirect(auth, provider);
     };
 
-    // مراقبة حالة المستخدم (هذا هو المحرك الأساسي)
+    // --- المحرك الجديد لاستلام النتيجة ---
+    getRedirectResult(auth).then((result) => {
+        if (result?.user) {
+            handleLogin(result.user);
+        }
+    }).catch((error) => {
+        console.error("Error code:", error.code);
+        if(error.code === "auth/internal-error") {
+            alert("حدث خطأ في الاتصال، تأكد من تحديث الصفحة.");
+        }
+    });
+
+    // دالة معالجة الدخول الموحدة
+    function handleLogin(user) {
+        if (user.email === ADMIN_EMAIL) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('userEmailLabel').innerText = "أهلاً سعد: " + user.email;
+            startListening();
+        } else {
+            alert("الإيميل " + user.email + " غير مصرح له.");
+            signOut(auth);
+        }
+    }
+
+    // مراقبة الجلسة الحالية
     onAuthStateChanged(auth, (user) => {
-        const loader = document.getElementById('loader');
         if (user) {
-            if (user.email === ADMIN_EMAIL) {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('userEmailLabel').innerText = "مرحباً: " + user.email;
-                loader.style.display = 'none';
-                startListening();
-            } else {
-                alert("الحساب " + user.email + " غير مصرح له.");
-                signOut(auth);
-            }
+            handleLogin(user);
         } else {
             document.getElementById('loginPage').style.display = 'block';
-            document.getElementById('mainContent').style.display = 'none';
-            loader.style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
         }
     });
 
     window.logout = () => signOut(auth).then(() => location.reload());
 
-    // نظام إدارة البيانات
+    // إدارة البيانات
     let clients = [];
     function startListening() {
-        onSnapshot(clientsCol, (snapshot) => {
+        onSnapshot(collection(db, "clients"), (snapshot) => {
             clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderHome();
         });
@@ -179,8 +185,8 @@
         clients.forEach(c => {
             total += parseFloat(c.total || 0);
             list.innerHTML += `<div class="client-row">
-                <div><h6 class="mb-0">${c.name}</h6><small class="text-dim">الجوال: ${c.phone}</small></div>
-                <div class="fw-bold">${c.total}</div>
+                <div><h6 class="mb-0">${c.name}</h6><small class="text-dim">${c.phone}</small></div>
+                <div class="fw-bold text-warning">${c.total}</div>
             </div>`;
         });
         document.getElementById('totalInvestment').innerText = total.toLocaleString() + " ر.س";
@@ -196,17 +202,11 @@
 
     document.getElementById('clientForm').onsubmit = async function(e) {
         e.preventDefault();
-        const amount = parseFloat(document.getElementById('amount').value);
-        const count = parseInt(document.getElementById('instCount').value);
-        const date = new Date(document.getElementById('startDate').value);
-        let installments = [];
-        for(let i=0; i<count; i++) {
-            let d = new Date(date); d.setMonth(d.getMonth() + i);
-            installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
-        }
-        await addDoc(clientsCol, {
-            name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value,
-            total: amount, installments: installments
+        await addDoc(collection(db, "clients"), {
+            name: document.getElementById('cName').value,
+            phone: document.getElementById('cPhone').value,
+            total: document.getElementById('amount').value,
+            createdAt: new Date().toISOString()
         });
         this.reset(); showSection('home');
     };
