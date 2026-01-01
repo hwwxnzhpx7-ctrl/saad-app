@@ -147,8 +147,8 @@
                     <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
                 </div>
                 <div class="section-title">الخطة المالية</div>
-                <label>سعر الشراء (التكلفة)</label>
-                <input type="number" id="costAmount" class="form-control mb-3" required>
+                <label>سعر الشراء (التكلفة عليك)</label>
+                <input type="number" id="costAmount" class="form-control mb-3" placeholder="0.00" required>
                 <div class="row g-2 mb-3">
                     <div class="col-6"><label>مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
                     <div class="col-6"><label>الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
@@ -187,7 +187,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getAuth, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut, getRedirectResult } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
@@ -208,23 +208,32 @@
     let clients = [];
     let showOnlyLate = false;
 
-    // دالة الدخول عبر قوقل
+    // دالة الدخول (تم تغييرها لـ Redirect لتجنب حظر النوافذ)
     window.loginWithGoogle = () => {
-        signInWithPopup(auth, provider).then((result) => {
-            if (result.user.email !== ADMIN_EMAIL) {
-                alert("عذراً، هذا الحساب غير مصرح له.");
-                signOut(auth);
-            }
-        }).catch(err => alert("خطأ في الدخول: " + err.message));
+        signInWithRedirect(auth, provider);
     };
+
+    // معالجة نتيجة الدخول بعد إعادة التوجيه
+    getRedirectResult(auth).catch((err) => {
+        if(err.code !== 'auth/redirect-cancelled-by-user') {
+            alert("خطأ في تسجيل الدخول: " + err.message);
+        }
+    });
 
     // مراقبة حالة الدخول
     onAuthStateChanged(auth, (user) => {
-        if (user && user.email === ADMIN_EMAIL) {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            document.getElementById('userInfo').innerHTML = `<img src="${user.photoURL}" class="rounded-circle mb-2" width="60"><br><b>${user.displayName}</b><br><small class="text-dim">${user.email}</small>`;
-            startListening();
+        if (user) {
+            if (user.email === ADMIN_EMAIL) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('userInfo').innerHTML = `
+                    <img src="${user.photoURL}" class="rounded-circle mb-2" width="60">
+                    <br><b>${user.displayName}</b><br><small class="text-dim">${user.email}</small>`;
+                startListening();
+            } else {
+                alert("عذراً، هذا الحساب (" + user.email + ") غير مصرح له بالدخول.");
+                signOut(auth);
+            }
         } else {
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('mainContent').style.display = 'none';
@@ -240,7 +249,6 @@
         });
     }
 
-    // --- باقي الدوال البرمجية (renderHome, viewClient, etc.) تبقى كما هي ---
     window.toggleLateFilter = () => {
         showOnlyLate = !showOnlyLate;
         const btn = document.getElementById('filterLateBtn');
@@ -305,6 +313,7 @@
                 </div>`;
         });
         document.getElementById('totalInvestment').innerText = totalSales.toLocaleString() + ' ر.س';
+        document.getElementById('clientsCount').innerText = clients.length;
         document.getElementById('statCollected').innerText = collected.toLocaleString();
         document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
         document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString();
