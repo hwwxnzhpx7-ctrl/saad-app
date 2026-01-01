@@ -3,109 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | التقسيط الذكي</title>
+    <title>i-System Pro | دخول آمن</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <style>
-        :root { --bg-dark: #0f1217; --card-bg: #1c2128; --accent-orange: #ff6b35; --text-main: #ffffff; --text-dim: #e0e0e0; --success-green: #2ecc71; --error-red: #e74c3c; }
-        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Segoe UI', sans-serif; margin-bottom: 90px; }
-        .stat-card { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .mini-stat { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .form-control { background: #24292f !important; border: 1px solid #3d444d !important; color: white !important; border-radius: 12px; padding: 12px; }
-        .btn-action { background: var(--accent-orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; width: 100%; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 33, 40, 0.98); display: flex; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-item { color: #8b949e; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
-        .nav-item.active { color: var(--accent-orange); }
-        .nav-item i { font-size: 1.5rem; display: block; }
-        .client-row { background: #24292f; border-radius: 15px; margin-bottom: 12px; padding: 18px; display: flex; justify-content: space-between; align-items: center; }
-        .status-paid { color: var(--success-green); background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; font-weight: bold; }
-        .status-unpaid { color: var(--error-red); background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; font-weight: bold; }
+        :root { --bg: #0f1217; --card: #1c2128; --accent: #ff6b35; }
+        body { background-color: var(--bg); color: white; font-family: sans-serif; }
+        .login-box { background: var(--card); border-radius: 20px; padding: 30px; border: 1px solid #333; margin-top: 100px; }
+        .form-control { background: #24292f !important; border: 1px solid #444 !important; color: white !important; text-align: center; border-radius: 12px; margin-bottom: 20px; }
+        .btn-send { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; }
+        #recaptcha-container { margin-top: 15px; }
     </style>
 </head>
 <body>
 
-<div id="loginPage" class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-5 stat-card text-center">
-            <h3 class="mb-4 mt-2">دخول i-System</h3>
-            <div id="phone-box">
-                <input type="text" id="phone" class="form-control text-center mb-4 fs-5" placeholder="0534152055">
-                <button onclick="sendCode()" class="btn btn-action">إرسال الرمز</button>
-                <div id="recaptcha-container" class="mt-3"></div>
+        <div id="auth-ui" class="col-md-5 login-box text-center">
+            <h4 class="mb-4">دخول النظام (SMS)</h4>
+            
+            <div id="phone-stage">
+                <p class="small text-secondary">سيتم إرسال رمز تحقق لمرة واحدة إلى جوالك</p>
+                <input type="text" id="phone-input" class="form-control" placeholder="0534152055">
+                <button onclick="handleSendOTP()" class="btn-send">إرسال رمز التحقق</button>
+                <div id="recaptcha-container"></div>
             </div>
-            <div id="otp-box" style="display:none;">
-                <input type="text" id="otp" class="form-control text-center mb-4 fs-3" placeholder="أدخل الرمز">
-                <button onclick="verifyCode()" class="btn btn-action">تأكيد الدخول</button>
+
+            <div id="otp-stage" style="display:none;">
+                <p class="small text-secondary">أدخل الرمز المكون من 6 أرقام</p>
+                <input type="text" id="otp-input" class="form-control" placeholder="••••••">
+                <button onclick="handleVerifyOTP()" class="btn-send">تأكيد الدخول</button>
+                <button onclick="location.reload()" class="btn btn-link text-secondary btn-sm mt-3">رجوع</button>
             </div>
         </div>
-    </div>
-</div>
-
-<div id="mainContent" style="display: none;">
-    <section id="homeSection" class="p-3">
-        <div class="stat-card text-center border-0" style="background: linear-gradient(145deg, #1c2128, #111418);">
-            <small class="text-dim">إجمالي المحفظة الاستثمارية</small>
-            <h1 class="fw-bold my-2" id="totalInvestment">0</h1>
-            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">العملاء: <span id="clientsCount">0</span></div>
-        </div>
-
-        <div class="row g-2 mb-3">
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المحصل</small><span id="statCollected" class="fw-bold text-success">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">الأرباح</small><span id="statRealProfit" class="fw-bold text-warning">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المتبقي</small><span id="statRemaining" class="fw-bold text-danger">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المتعثرين</small><span id="statLateCount" class="fw-bold text-danger">0</span></div></div>
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold">سجل العملاء</h6>
-            <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">المتأخرين</button>
-        </div>
-        <div id="clientsList"></div>
-    </section>
-
-    <section id="addClientSection" class="p-3" style="display:none;">
-        <h5 class="fw-bold mb-3">فتح ملف استثماري</h5>
-        <div class="stat-card">
-            <form id="clientForm">
-                <input type="text" id="cName" class="form-control mb-3" placeholder="الاسم الرباعي" required>
-                <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية" required></div>
-                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="الجوال" required></div>
-                </div>
-                <label class="small text-dim">التكلفة</label>
-                <input type="number" id="costAmount" class="form-control mb-3" required>
-                <div class="row g-2 mb-3">
-                    <div class="col-6"><label class="small text-dim">مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
-                    <div class="col-6"><label class="small text-dim">الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
-                </div>
-                <label class="small text-dim">تاريخ أول قسط</label>
-                <input type="date" id="startDate" class="form-control mb-4" required>
-                <button type="submit" class="btn btn-action">إعتماد العقد</button>
-            </form>
-        </div>
-    </section>
-
-    <section id="detailsSection" class="p-3" style="display:none;">
-        <div class="d-flex justify-content-between mb-4">
-            <button class="btn btn-dark" onclick="showSection('home')"><i class="bi bi-chevron-right"></i></button>
-            <button class="btn btn-light" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i></button>
-        </div>
-        <div id="pdfArea"><div id="clientDetailsContent"></div></div>
-    </section>
-
-    <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door"></i>الرئيسية</div>
-        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square"></i>إضافة</div>
-        <div class="nav-item" onclick="logout()"><i class="bi bi-box-arrow-right"></i>خروج</div>
     </div>
 </div>
 
 <script>
+    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
         apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
         authDomain: "myinstallmentsystem.firebaseapp.com",
@@ -114,140 +51,47 @@
     };
     
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const ADMIN_PHONE = "+966534152055";
 
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 'size': 'invisible' });
-
-    function sendCode() {
-        let num = document.getElementById('phone').value.trim();
-        if(num.startsWith('0')) num = '+966' + num.substring(1);
-        if(!num.startsWith('+')) num = '+966' + num;
-
-        if(num !== ADMIN_PHONE) { alert("رقم غير مصرح له"); return; }
-
-        auth.signInWithPhoneNumber(num, window.recaptchaVerifier)
-            .then(result => {
-                window.confirmationResult = result;
-                document.getElementById('phone-box').style.display = 'none';
-                document.getElementById('otp-box').style.display = 'block';
-            }).catch(err => alert("خطأ: " + err.message));
-    }
-
-    function verifyCode() {
-        const code = document.getElementById('otp').value;
-        window.confirmationResult.confirm(code).catch(() => alert("الرمز خطأ"));
-    }
-
-    auth.onAuthStateChanged(user => {
-        if (user && user.phoneNumber === ADMIN_PHONE) {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            startListening();
-        } else {
-            document.getElementById('loginPage').style.display = 'block';
-            document.getElementById('mainContent').style.display = 'none';
-        }
+    // تهيئة أداة التحقق (reCAPTCHA) بشكل مرئي لضمان عدم حظر الطلب
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'normal',
+        'callback': (response) => { console.log("reCAPTCHA solved"); }
     });
 
-    // --- إدارة البيانات ---
-    let clients = [];
-    let showOnlyLate = false;
+    function handleSendOTP() {
+        let phoneNumber = document.getElementById('phone-input').value.trim();
+        
+        // تنسيق الرقم للسعودية
+        if(phoneNumber.startsWith('0')) phoneNumber = '+966' + phoneNumber.substring(1);
+        if(!phoneNumber.startsWith('+')) phoneNumber = '+966' + phoneNumber;
 
-    function startListening() {
-        db.collection("clients").onSnapshot(snap => {
-            clients = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderHome();
-        });
-    }
+        const appVerifier = window.recaptchaVerifier;
 
-    function renderHome() {
-        const list = document.getElementById('clientsList');
-        list.innerHTML = '';
-        let totalSales = 0, collected = 0, totalCost = 0, lateCount = 0;
-        const today = new Date().toISOString().split('T')[0];
-
-        clients.forEach(c => {
-            let hasLate = false, clientPaid = 0;
-            c.installments.forEach(inst => {
-                if(inst.status === 'مدفوع') { collected += parseFloat(inst.amount); clientPaid += parseFloat(inst.amount); }
-                else if (inst.dueDate < today) hasLate = true;
+        firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                document.getElementById('phone-stage').style.display = 'none';
+                document.getElementById('otp-stage').style.display = 'block';
+                alert("تم إرسال الرمز بنجاح!");
+            }).catch((error) => {
+                console.error("SMS Error:", error);
+                alert("خطأ في الإرسال: " + error.message);
+                // إعادة تحميل الـ reCAPTCHA في حال الخطأ
+                appVerifier.render().then(widgetId => grecaptcha.reset(widgetId));
             });
-            if(hasLate) lateCount++;
-            if(showOnlyLate && !hasLate) return;
-            totalSales += parseFloat(c.total); totalCost += parseFloat(c.cost || 0);
-
-            list.innerHTML += `
-                <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
-                    <div><h6 class="mb-0 text-white">${c.name}</h6><small class="text-dim">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3"></i></button>
-                    </div>
-                </div>`;
-        });
-        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString();
-        document.getElementById('statCollected').innerText = collected.toLocaleString();
-        document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
-        document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
-        document.getElementById('statLateCount').innerText = lateCount;
-        document.getElementById('clientsCount').innerText = clients.length;
     }
 
-    window.showSection = (id) => {
-        ['homeSection', 'addClientSection', 'detailsSection'].forEach(s => document.getElementById(s).style.display = 'none');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById(id + 'Section').style.display = 'block';
-        if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.add('active');
-    };
-
-    document.getElementById('clientForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const amount = parseFloat(document.getElementById('amount').value);
-        const count = parseInt(document.getElementById('instCount').value);
-        const date = new Date(document.getElementById('startDate').value);
-        let installments = [];
-        for(let i=0; i<count; i++) {
-            let d = new Date(date); d.setMonth(d.getMonth() + i);
-            installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
-        }
-        await db.collection("clients").add({
-            name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
-            phone: document.getElementById('cPhone').value, cost: document.getElementById('costAmount').value,
-            total: amount, installments: installments
-        });
-        e.target.reset(); showSection('home');
-    };
-
-    window.viewClient = (id) => {
-        const client = clients.find(c => c.id === id);
-        let html = `<div class="stat-card">
-            <h5 class="text-white">${client.name}</h5>
-            <small class="text-dim">${client.phone}</small><hr>
-            <table class="table table-dark small">
-                <thead><tr><th>التاريخ</th><th>المبلغ</th><th>الحالة</th></tr></thead>
-                <tbody>`;
-        client.installments.forEach((inst, idx) => {
-            const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
-            html += `<tr><td>${inst.dueDate}</td><td>${inst.amount}</td>
-                <td><span class="${sClass}" onclick="togglePayment('${id}', ${idx})" style="cursor:pointer">${inst.status}</span></td></tr>`;
-        });
-        document.getElementById('clientDetailsContent').innerHTML = html + `</tbody></table></div>`;
-        showSection('details');
-    };
-
-    window.togglePayment = async (id, idx) => {
-        const c = clients.find(x => x.id === id);
-        c.installments[idx].status = c.installments[idx].status === 'مدفوع' ? 'غير مدفوع' : 'مدفوع';
-        await db.collection("clients").doc(id).update({ installments: c.installments });
-        viewClient(id);
-    };
-
-    window.toggleLateFilter = () => { showOnlyLate = !showOnlyLate; renderHome(); };
-    window.deleteClient = async (id) => { if(confirm("حذف؟")) await db.collection("clients").doc(id).delete(); };
-    window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
-    window.logout = () => auth.signOut().then(() => location.reload());
+    function handleVerifyOTP() {
+        const code = document.getElementById('otp-input').value;
+        window.confirmationResult.confirm(code)
+            .then((result) => {
+                alert("تم الدخول بنجاح!");
+                // هنا يتم توجيهك لصفحة النظام الرئيسية
+                window.location.href = "main.html"; // أو تغيير الـ DOM لعرض المحتوى
+            }).catch((error) => {
+                alert("الرمز غير صحيح، حاول مرة أخرى.");
+            });
+    }
 </script>
 </body>
 </html>
