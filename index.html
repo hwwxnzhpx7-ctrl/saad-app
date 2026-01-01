@@ -208,19 +208,11 @@
     let clients = [];
     let showOnlyLate = false;
 
-    // دالة الدخول (تم تغييرها لـ Redirect لتجنب حظر النوافذ)
     window.loginWithGoogle = () => {
         signInWithRedirect(auth, provider);
     };
 
-    // معالجة نتيجة الدخول بعد إعادة التوجيه
-    getRedirectResult(auth).catch((err) => {
-        if(err.code !== 'auth/redirect-cancelled-by-user') {
-            alert("خطأ في تسجيل الدخول: " + err.message);
-        }
-    });
-
-    // مراقبة حالة الدخول
+    // مراقبة حالة الدخول مع تنبيهات توضيحية
     onAuthStateChanged(auth, (user) => {
         if (user) {
             if (user.email === ADMIN_EMAIL) {
@@ -231,7 +223,7 @@
                     <br><b>${user.displayName}</b><br><small class="text-dim">${user.email}</small>`;
                 startListening();
             } else {
-                alert("عذراً، هذا الحساب (" + user.email + ") غير مصرح له بالدخول.");
+                alert("تم تسجيل الدخول بـ: " + user.email + "\nهذا الإيميل غير مصرح له بالدخول للنظام.");
                 signOut(auth);
             }
         } else {
@@ -289,6 +281,7 @@
 
     function renderHome() {
         const list = document.getElementById('clientsList');
+        if(!list) return;
         list.innerHTML = '';
         let totalSales = 0, collected = 0, totalCost = 0, lateCount = 0;
         const today = new Date().toISOString().split('T')[0];
