@@ -28,8 +28,10 @@
         .table tbody td { color: #ffffff !important; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
         .btn-action { background: var(--accent-orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; font-size: 1.1rem; }
-        /* زر جوجل الجديد */
-        .btn-google { background: #ffffff; color: #000000; border-radius: 15px; padding: 12px; font-weight: bold; width: 100%; border: none; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+        
+        /* زر جوجل الحصري */
+        .btn-google { background: #ffffff; color: #000000; border-radius: 15px; padding: 15px; font-weight: bold; width: 100%; border: none; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 1.1rem; transition: 0.3s; }
+        .btn-google:active { transform: scale(0.98); background: #f1f1f1; }
         
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 33, 40, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .nav-item { color: #8b949e; text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
@@ -45,21 +47,17 @@
 <body>
 
 <div id="loginPage" class="p-4 mt-5">
-    <div class="stat-card text-center shadow-lg">
-        <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
+    <div class="stat-card text-center shadow-lg py-5">
+        <div style="background: var(--accent-orange); width: 70px; height: 70px; border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px;">
+            <i class="bi bi-google text-white fs-1"></i>
         </div>
-        <h4 class="fw-bold">تقسيط سعد</h4>
+        <h3 class="fw-bold mb-2">تقسيط سعد</h3>
+        <p class="text-dim mb-5">يرجى تسجيل الدخول بحسابك المعتمد</p>
         
-        <button onclick="loginWithGoogle()" class="btn btn-google">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
-            الدخول السريع عبر Google
+        <button onclick="loginWithGoogle()" class="btn btn-google shadow-sm">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="24">
+            الدخول عبر حساب Google
         </button>
-
-        <div class="my-3 text-dim small">أو استخدم رمز الوصول</div>
-
-        <input type="password" id="passInput" class="form-control text-center mb-3 fs-4" placeholder="••••">
-        <button onclick="login()" class="btn btn-action w-100">تسجيل الدخول</button>
     </div>
 </div>
 
@@ -140,17 +138,16 @@
 
     <section id="settingsSection" class="p-3" style="display:none;">
         <div class="stat-card text-center">
-            <h6>إعدادات الأمان</h6>
-            <input type="password" id="newPass" class="form-control my-3 text-center" placeholder="رمز جديد">
-            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الرمز</button>
-            <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج</button>
+            <h6>إدارة الحساب</h6>
+            <p class="text-dim small mt-2">أنت مسجل دخول عبر جوجل</p>
+            <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج من النظام</button>
         </div>
     </section>
 
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door-fill"></i>الرئيسية</div>
         <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square-fill"></i>إضافة</div>
-        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-shield-lock-fill"></i>الأمان</div>
+        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-person-badge-fill"></i>الحساب</div>
     </div>
 </div>
 
@@ -175,29 +172,23 @@
     const clientsCol = collection(db, "clients");
 
     let clients = [];
-    let systemPass = localStorage.getItem('systemPass') || '1955';
 
-    // وظيفة جوجل الجديدة
+    // وظيفة الدخول عبر جوجل
     window.loginWithGoogle = () => {
         signInWithPopup(auth, provider).catch(e => alert("خطأ في الاتصال بجوجل: " + e.message));
     };
 
-    // مراقبة حالة الدخول
+    // مراقبة حالة الدخول (لإخفاء شاشة الدخول تلقائياً)
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             startListening();
+        } else {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
         }
     });
-
-    window.login = () => {
-        if (document.getElementById('passInput').value === systemPass) {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            startListening();
-        } else { alert('خطأ في الرمز'); }
-    }
 
     function startListening() {
         onSnapshot(clientsCol, (snapshot) => {
@@ -331,8 +322,7 @@
 
     window.deleteClient = async (id) => { if(confirm("حذف العميل نهائياً من تقسيط سعد؟")) await deleteDoc(doc(db, "clients", id)); };
     window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
-    window.changePassword = () => { localStorage.setItem('systemPass', document.getElementById('newPass').value); alert('تم التحديث'); };
-    window.logout = () => { if(confirm("هل تريد حفظ التغييرات وتسجيل الخروج؟")) { signOut(auth).then(() => location.reload()); } };
+    window.logout = () => { if(confirm("هل تريد تسجيل الخروج؟")) { signOut(auth).then(() => location.reload()); } };
 </script>
 </body>
 </html>
