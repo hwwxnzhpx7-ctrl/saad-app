@@ -4,47 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>i-System Pro | التقسيط الذكي</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
         :root { --bg-dark: #0f1217; --card-bg: #1c2128; --accent-orange: #ff6b35; --text-main: #ffffff; --text-dim: #e0e0e0; --success-green: #2ecc71; --error-red: #e74c3c; }
-        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Segoe UI', Roboto, sans-serif; margin-bottom: 90px; }
+        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Segoe UI', sans-serif; margin-bottom: 90px; }
         .stat-card { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .mini-stat { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        label, .section-title { color: #ffffff !important; font-weight: 600 !important; font-size: 0.95rem; margin-bottom: 8px; display: block; }
-        .form-control { background: #24292f !important; border: 1px solid #3d444d !important; border-radius: 12px !important; color: #ffffff !important; padding: 12px !important; }
-        .btn-action { background: var(--accent-orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; font-size: 1.1rem; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 33, 40, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-item { color: #8b949e; text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
-        .nav-item.active { color: var(--accent-orange); font-weight: bold; }
-        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
-        .status-paid { color: var(--success-green); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; }
-        .status-unpaid { color: var(--error-red); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; }
-        .client-row { background: #24292f; border-radius: 15px; margin-bottom: 12px; padding: 18px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .section-title { color: var(--accent-orange) !important; border-right: 4px solid var(--accent-orange); padding-right: 12px; margin: 20px 0 15px; font-size: 1rem; }
+        .form-control { background: #24292f !important; border: 1px solid #3d444d !important; color: white !important; border-radius: 12px; padding: 12px; }
+        .btn-action { background: var(--accent-orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; width: 100%; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 33, 40, 0.98); display: flex; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-item { color: #8b949e; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
+        .nav-item.active { color: var(--accent-orange); }
+        .nav-item i { font-size: 1.5rem; display: block; }
+        .client-row { background: #24292f; border-radius: 15px; margin-bottom: 12px; padding: 18px; display: flex; justify-content: space-between; align-items: center; }
+        .status-paid { color: var(--success-green); background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; font-weight: bold; }
+        .status-unpaid { color: var(--error-red); background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="loginPage" class="p-4 mt-5">
-    <div class="stat-card text-center shadow-lg">
-        <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
-        </div>
-        <h4 class="fw-bold">نظام i-System</h4>
-        
-        <div id="phoneArea">
-            <label class="mt-2 text-center w-100">أدخل رقم الجوال للدخول</label>
-            <input type="text" id="phoneInput" class="form-control text-center my-4 fs-4" placeholder="0534152055">
-            <button id="sendOTPBtn" class="btn btn-action w-100">إرسال الرمز</button>
-            <div id="recaptcha-container" class="mt-3"></div>
-        </div>
-
-        <div id="otpArea" style="display: none;">
-            <label class="mt-2 text-center w-100">أدخل الرمز المستلم</label>
-            <input type="text" id="otpInput" class="form-control text-center my-4 fs-3" placeholder="••••••">
-            <button id="verifyOTPBtn" class="btn btn-action w-100">تأكيد الرمز</button>
+<div id="loginPage" class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 stat-card text-center">
+            <h3 class="mb-4 mt-2">دخول i-System</h3>
+            <div id="phone-box">
+                <input type="text" id="phone" class="form-control text-center mb-4 fs-5" placeholder="0534152055">
+                <button onclick="sendCode()" class="btn btn-action">إرسال الرمز</button>
+                <div id="recaptcha-container" class="mt-3"></div>
+            </div>
+            <div id="otp-box" style="display:none;">
+                <input type="text" id="otp" class="form-control text-center mb-4 fs-3" placeholder="أدخل الرمز">
+                <button onclick="verifyCode()" class="btn btn-action">تأكيد الدخول</button>
+            </div>
         </div>
     </div>
 </div>
@@ -52,24 +49,21 @@
 <div id="mainContent" style="display: none;">
     <section id="homeSection" class="p-3">
         <div class="stat-card text-center border-0" style="background: linear-gradient(145deg, #1c2128, #111418);">
-            <label class="text-center w-100">إجمالي المحفظة الاستثمارية</label>
-            <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
-            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">عدد العملاء: <span id="clientsCount">0</span></div>
+            <small class="text-dim">إجمالي المحفظة الاستثمارية</small>
+            <h1 class="fw-bold my-2" id="totalInvestment">0</h1>
+            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">العملاء: <span id="clientsCount">0</span></div>
         </div>
 
         <div class="row g-2 mb-3">
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
-            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05);"><small class="text-dim d-block">المتعثرين حالياً</small><span id="statLateCount" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المحصل</small><span id="statCollected" class="fw-bold text-success">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">الأرباح</small><span id="statRealProfit" class="fw-bold text-warning">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المتبقي</small><span id="statRemaining" class="fw-bold text-danger">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block">المتعثرين</small><span id="statLateCount" class="fw-bold text-danger">0</span></div></div>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-            <h6 class="fw-bold mb-0">سجل العملاء</h6>
-            <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">
-                <i class="bi bi-exclamation-triangle-fill"></i> المتأخرين
-            </button>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold">سجل العملاء</h6>
+            <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">المتأخرين</button>
         </div>
         <div id="clientsList"></div>
     </section>
@@ -78,101 +72,75 @@
         <h5 class="fw-bold mb-3">فتح ملف استثماري</h5>
         <div class="stat-card">
             <form id="clientForm">
-                <div class="section-title">بيانات العميل</div>
                 <input type="text" id="cName" class="form-control mb-3" placeholder="الاسم الرباعي" required>
                 <div class="row g-2 mb-3">
                     <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية" required></div>
-                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
+                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="الجوال" required></div>
                 </div>
-                <div class="section-title">بيانات الكفيل</div>
-                <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
-                <div class="section-title">الخطة المالية</div>
-                <label>سعر الشراء (التكلفة)</label>
+                <label class="small text-dim">التكلفة</label>
                 <input type="number" id="costAmount" class="form-control mb-3" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><label>مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
-                    <div class="col-6"><label>الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
+                    <div class="col-6"><label class="small text-dim">مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
+                    <div class="col-6"><label class="small text-dim">الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
                 </div>
-                <label>تاريخ أول قسط</label>
+                <label class="small text-dim">تاريخ أول قسط</label>
                 <input type="date" id="startDate" class="form-control mb-4" required>
-                <button type="submit" class="btn btn-action w-100">إعتماد العقد</button>
+                <button type="submit" class="btn btn-action">إعتماد العقد</button>
             </form>
         </div>
     </section>
 
     <section id="detailsSection" class="p-3" style="display:none;">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <button class="btn btn-dark rounded-circle" onclick="showSection('home')"><i class="bi bi-chevron-right text-white"></i></button>
-            <h6 class="fw-bold mb-0 text-white">كشف حساب</h6>
-            <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</button>
+        <div class="d-flex justify-content-between mb-4">
+            <button class="btn btn-dark" onclick="showSection('home')"><i class="bi bi-chevron-right"></i></button>
+            <button class="btn btn-light" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i></button>
         </div>
         <div id="pdfArea"><div id="clientDetailsContent"></div></div>
     </section>
 
-    <section id="settingsSection" class="p-3" style="display:none;">
-        <div class="stat-card text-center">
-            <i class="bi bi-person-check-fill fs-1 text-success"></i>
-            <h5 class="mt-3 text-white">أهلاً بك يا مدير</h5>
-            <p class="text-dim small">تم تسجيل الدخول بنجاح عبر جوالك الشخصي</p>
-            <hr class="border-secondary my-4">
-            <button onclick="logout()" class="btn btn-outline-danger w-100 border-0">تسجيل الخروج</button>
-        </div>
-    </section>
-
     <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door-fill"></i>الرئيسية</div>
-        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square-fill"></i>إضافة</div>
-        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-person-circle"></i>حسابي</div>
+        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door"></i>الرئيسية</div>
+        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square"></i>إضافة</div>
+        <div class="nav-item" onclick="logout()"><i class="bi bi-box-arrow-right"></i>خروج</div>
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-
+<script>
     const firebaseConfig = {
         apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
         authDomain: "myinstallmentsystem.firebaseapp.com",
         projectId: "myinstallmentsystem",
-        storageBucket: "myinstallmentsystem.firebasestorage.app",
-        messagingSenderId: "1073933519716",
         appId: "1:1073933519716:web:caac200c07e0356f81c871"
     };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    const clientsCol = collection(db, "clients");
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
     const ADMIN_PHONE = "+966534152055";
 
-    let clients = [];
-    let showOnlyLate = false;
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 'size': 'invisible' });
 
-    // --- نظام تسجيل الدخول بالجوال ---
-    window.setupRecaptcha = () => {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 'size': 'invisible' });
-        }
-    };
+    function sendCode() {
+        let num = document.getElementById('phone').value.trim();
+        if(num.startsWith('0')) num = '+966' + num.substring(1);
+        if(!num.startsWith('+')) num = '+966' + num;
 
-    document.getElementById('sendOTPBtn').onclick = () => {
-        let phone = document.getElementById('phoneInput').value.trim();
-        if(phone.startsWith('05')) phone = '+966' + phone.substring(1);
-        if (phone !== ADMIN_PHONE) { alert("غير مصرح لك"); return; }
-        
-        setupRecaptcha();
-        signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
-            .then(res => { window.confirmationResult = res; document.getElementById('phoneArea').style.display = 'none'; document.getElementById('otpArea').style.display = 'block'; })
-            .catch(err => alert("خطأ: " + err.message));
-    };
+        if(num !== ADMIN_PHONE) { alert("رقم غير مصرح له"); return; }
 
-    document.getElementById('verifyOTPBtn').onclick = () => {
-        const code = document.getElementById('otpInput').value;
+        auth.signInWithPhoneNumber(num, window.recaptchaVerifier)
+            .then(result => {
+                window.confirmationResult = result;
+                document.getElementById('phone-box').style.display = 'none';
+                document.getElementById('otp-box').style.display = 'block';
+            }).catch(err => alert("خطأ: " + err.message));
+    }
+
+    function verifyCode() {
+        const code = document.getElementById('otp').value;
         window.confirmationResult.confirm(code).catch(() => alert("الرمز خطأ"));
-    };
+    }
 
-    onAuthStateChanged(auth, (user) => {
+    auth.onAuthStateChanged(user => {
         if (user && user.phoneNumber === ADMIN_PHONE) {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
@@ -183,48 +151,16 @@
         }
     });
 
-    // --- نظام إدارة العملاء والبيانات ---
+    // --- إدارة البيانات ---
+    let clients = [];
+    let showOnlyLate = false;
+
     function startListening() {
-        onSnapshot(clientsCol, (snapshot) => {
-            clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        db.collection("clients").onSnapshot(snap => {
+            clients = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderHome();
         });
     }
-
-    window.toggleLateFilter = () => {
-        showOnlyLate = !showOnlyLate;
-        const btn = document.getElementById('filterLateBtn');
-        btn.classList.toggle('btn-danger', showOnlyLate);
-        btn.classList.toggle('btn-outline-danger', !showOnlyLate);
-        btn.innerHTML = showOnlyLate ? 'عرض الكل' : '<i class="bi bi-exclamation-triangle-fill"></i> المتأخرين';
-        renderHome();
-    };
-
-    window.showSection = (id) => {
-        ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById(id + 'Section').style.display = 'block';
-        document.getElementById('nav-' + id).classList.add('active');
-        if(id === 'home') renderHome();
-    }
-
-    document.getElementById('clientForm').onsubmit = async function(e) {
-        e.preventDefault();
-        const cost = parseFloat(document.getElementById('costAmount').value);
-        const amount = parseFloat(document.getElementById('amount').value);
-        const count = parseInt(document.getElementById('instCount').value);
-        const date = new Date(document.getElementById('startDate').value);
-        let installments = [];
-        for(let i=0; i<count; i++) {
-            let d = new Date(date); d.setMonth(d.getMonth() + i);
-            installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
-        }
-        await addDoc(clientsCol, {
-            name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
-            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments
-        });
-        this.reset(); showSection('home');
-    };
 
     function renderHome() {
         const list = document.getElementById('clientsList');
@@ -244,43 +180,58 @@
 
             list.innerHTML += `
                 <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
-                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-dim">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
+                    <div><h6 class="mb-0 text-white">${c.name}</h6><small class="text-dim">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
-                        <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3"></i></button>
                     </div>
                 </div>`;
         });
-        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString() + ' ر.س';
+        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString();
         document.getElementById('statCollected').innerText = collected.toLocaleString();
         document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
-        document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString();
-        document.getElementById('statLateCount').innerText = lateCount;
         document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
+        document.getElementById('statLateCount').innerText = lateCount;
         document.getElementById('clientsCount').innerText = clients.length;
     }
 
-    window.sendWhatsAppReminder = (clientId, instIndex) => {
-        const c = clients.find(x => x.id === clientId);
-        const inst = c.installments[instIndex];
-        let phone = c.phone.startsWith('05') ? '966' + c.phone.substring(1) : c.phone;
-        const msg = `أخي ${c.name}، نذكرك بقسط استحق بتاريخ ${inst.dueDate} بمبلغ ${inst.amount} ر.س.`;
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.showSection = (id) => {
+        ['homeSection', 'addClientSection', 'detailsSection'].forEach(s => document.getElementById(s).style.display = 'none');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(id + 'Section').style.display = 'block';
+        if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.add('active');
+    };
+
+    document.getElementById('clientForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const amount = parseFloat(document.getElementById('amount').value);
+        const count = parseInt(document.getElementById('instCount').value);
+        const date = new Date(document.getElementById('startDate').value);
+        let installments = [];
+        for(let i=0; i<count; i++) {
+            let d = new Date(date); d.setMonth(d.getMonth() + i);
+            installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
+        }
+        await db.collection("clients").add({
+            name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
+            phone: document.getElementById('cPhone').value, cost: document.getElementById('costAmount').value,
+            total: amount, installments: installments
+        });
+        e.target.reset(); showSection('home');
     };
 
     window.viewClient = (id) => {
         const client = clients.find(c => c.id === id);
-        let html = `<div class="stat-card border-0 shadow-lg">
-            <h5 class="fw-bold text-white">${client.name}</h5>
-            <div class="small text-dim mb-3">الجوال: ${client.phone} | الهوية: ${client.idNum}</div>
-            <table class="table table-dark table-borderless small">
-                <thead><tr class="text-dim border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th><th>تذكير</th></tr></thead>
+        let html = `<div class="stat-card">
+            <h5 class="text-white">${client.name}</h5>
+            <small class="text-dim">${client.phone}</small><hr>
+            <table class="table table-dark small">
+                <thead><tr><th>التاريخ</th><th>المبلغ</th><th>الحالة</th></tr></thead>
                 <tbody>`;
         client.installments.forEach((inst, idx) => {
             const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
             html += `<tr><td>${inst.dueDate}</td><td>${inst.amount}</td>
-                <td onclick="togglePayment('${id}', ${idx})" style="cursor:pointer"><span class="${sClass}">${inst.status}</span></td>
-                <td>${inst.status === 'غير مدفوع' ? `<i class="bi bi-whatsapp text-success fs-5" onclick="sendWhatsAppReminder('${id}', ${idx})"></i>` : '✅'}</td></tr>`;
+                <td><span class="${sClass}" onclick="togglePayment('${id}', ${idx})" style="cursor:pointer">${inst.status}</span></td></tr>`;
         });
         document.getElementById('clientDetailsContent').innerHTML = html + `</tbody></table></div>`;
         showSection('details');
@@ -289,13 +240,14 @@
     window.togglePayment = async (id, idx) => {
         const c = clients.find(x => x.id === id);
         c.installments[idx].status = c.installments[idx].status === 'مدفوع' ? 'غير مدفوع' : 'مدفوع';
-        await updateDoc(doc(db, "clients", id), { installments: c.installments });
+        await db.collection("clients").doc(id).update({ installments: c.installments });
         viewClient(id);
     };
 
-    window.deleteClient = async (id) => { if(confirm("حذف نهائي؟")) await deleteDoc(doc(db, "clients", id)); };
+    window.toggleLateFilter = () => { showOnlyLate = !showOnlyLate; renderHome(); };
+    window.deleteClient = async (id) => { if(confirm("حذف؟")) await db.collection("clients").doc(id).delete(); };
     window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
-    window.logout = () => signOut(auth).then(() => location.reload());
+    window.logout = () => auth.signOut().then(() => location.reload());
 </script>
 </body>
 </html>
