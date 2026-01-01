@@ -3,112 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | النظام المطور</title>
+    <title>i-System Pro | سعد السهلي</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root {
-            --bg-dark: #0f1217;
-            --card-bg: #1c2128;
-            --accent-orange: #ff6b35; 
-            --text-main: #ffffff;
-            --text-dim: #8b949e; 
-        }
-        body { 
-            background-color: var(--bg-dark); 
-            color: var(--text-main);
-            font-family: 'Segoe UI', sans-serif;
-            margin-bottom: 90px;
-        }
-        #loader {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
-        }
-        .stat-card {
-            background: var(--card-bg); border-radius: 20px; padding: 20px;
-            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
-        }
-        .btn-google {
-            background: white; color: black; font-weight: bold;
-            border-radius: 15px; padding: 15px; width: 100%; border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .form-control { 
-            background: #24292f !important; border: 1px solid #3d444d !important; 
-            border-radius: 12px !important; color: #ffffff !important; padding: 12px !important;
-        }
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(28, 33, 40, 0.98);
-            display: flex; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
-        }
-        .nav-item { color: #8b949e; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
-        .nav-item.active { color: var(--accent-orange); font-weight: bold; }
-        .nav-item i { font-size: 1.5rem; display: block; }
+        :root { --bg: #0f1217; --card: #1c2128; --orange: #ff6b35; }
+        body { background: var(--bg); color: white; font-family: sans-serif; }
+        #loader { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        .login-box { max-width: 400px; margin: 100px auto; padding: 30px; background: var(--card); border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-google { background: white; color: black; font-weight: bold; width: 100%; padding: 15px; border-radius: 12px; border: none; margin-top: 20px; }
+        #mainContent { display: none; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div id="loader">
     <div class="spinner-border text-warning mb-3"></div>
-    <p id="loaderText">جاري فحص حالة الدخول...</p>
+    <p>جاري التحقق من الهوية...</p>
 </div>
 
-<div id="loginPage" class="p-4 mt-5" style="display: none;">
-    <div class="stat-card text-center">
-        <div class="mb-4">
-            <i class="bi bi-shield-lock-fill" style="font-size: 3rem; color: var(--accent-orange);"></i>
-        </div>
-        <h4 class="fw-bold mb-2">دخول النظام الآمن</h4>
-        <p class="text-dim mb-4 small">سجل دخولك بحساب قوقل للوصول لبياناتك</p>
-        <button onclick="loginWithGoogle()" class="btn btn-google">
-            <i class="bi bi-google me-2 text-danger"></i> الدخول عبر Google
+<div id="loginPage" style="display: none;">
+    <div class="login-box">
+        <h3 class="fw-bold" style="color: var(--orange)">i-System Pro</h3>
+        <p class="text-secondary small">نظام إدارة الأقساط</p>
+        <button onclick="loginWithGoogle()" class="btn-google">
+            <i class="bi bi-google text-danger"></i> دخول عبر Google
         </button>
     </div>
 </div>
 
-<div id="mainContent" style="display: none;">
-    <section id="homeSection" class="p-3">
-        <div class="stat-card text-center">
-            <label class="text-dim small">إجمالي الاستثمارات</label>
-            <h1 class="fw-bold my-2" id="totalInvestment">0</h1>
-            <div class="badge bg-dark">العملاء: <span id="clientsCount">0</span></div>
-        </div>
-        <div id="clientsList"></div>
-    </section>
-
-    <section id="addClientSection" class="p-3" style="display:none;">
-        <h5 class="fw-bold mb-3">إضافة ملف جديد</h5>
-        <div class="stat-card">
-            <form id="clientForm">
-                <input type="text" id="cName" class="form-control mb-2" placeholder="اسم العميل" required>
-                <input type="text" id="cPhone" class="form-control mb-2" placeholder="رقم الجوال" required>
-                <input type="number" id="amount" class="form-control mb-2" placeholder="المبلغ الإجمالي" required>
-                <input type="number" id="instCount" class="form-control mb-3" placeholder="عدد الأقساط" required>
-                <button type="submit" class="btn btn-warning w-100 fw-bold py-3" style="border-radius: 15px;">إضافة العميل</button>
-            </form>
-        </div>
-    </section>
-
-    <section id="settingsSection" class="p-3" style="display:none;">
-        <div class="stat-card text-center">
-            <p id="userEmailLabel" class="mb-4"></p>
-            <button onclick="logout()" class="btn btn-outline-danger w-100">خروج آمن</button>
-        </div>
-    </section>
-
-    <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house"></i>الرئيسية</div>
-        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square"></i>إضافة</div>
-        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-person"></i>الحساب</div>
+<div id="mainContent">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>أهلاً سعد السهلي</h4>
+        <button onclick="logout()" class="btn btn-sm btn-outline-danger">خروج</button>
+    </div>
+    <div class="p-4 rounded-4 text-center" style="background: var(--card)">
+        <small class="text-secondary">إجمالي المحفظة</small>
+        <h2 class="fw-bold">نظامك جاهز للعمل</h2>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getAuth, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut, getRedirectResult } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -121,7 +57,6 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
     const ADMIN_EMAIL = "cssp2015@gmail.com";
@@ -131,85 +66,39 @@
         signInWithRedirect(auth, provider);
     };
 
-    // --- المحرك الجديد لاستلام النتيجة ---
+    // معالجة النتيجة فور العودة من قوقل
     getRedirectResult(auth).then((result) => {
         if (result?.user) {
-            handleLogin(result.user);
+            checkUser(result.user);
         }
     }).catch((error) => {
-        console.error("Error code:", error.code);
-        if(error.code === "auth/internal-error") {
-            alert("حدث خطأ في الاتصال، تأكد من تحديث الصفحة.");
-        }
+        console.error("Auth Error:", error.message);
     });
 
-    // دالة معالجة الدخول الموحدة
-    function handleLogin(user) {
+    // التحقق من الإيميل
+    function checkUser(user) {
         if (user.email === ADMIN_EMAIL) {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('userEmailLabel').innerText = "أهلاً سعد: " + user.email;
-            startListening();
         } else {
-            alert("الإيميل " + user.email + " غير مصرح له.");
+            alert("إيميل غير مصرح");
             signOut(auth);
         }
     }
 
-    // مراقبة الجلسة الحالية
+    // مراقبة حالة الجلسة
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            handleLogin(user);
+            checkUser(user);
         } else {
             document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
             document.getElementById('loader').style.display = 'none';
         }
     });
 
     window.logout = () => signOut(auth).then(() => location.reload());
-
-    // إدارة البيانات
-    let clients = [];
-    function startListening() {
-        onSnapshot(collection(db, "clients"), (snapshot) => {
-            clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderHome();
-        });
-    }
-
-    function renderHome() {
-        const list = document.getElementById('clientsList');
-        list.innerHTML = '';
-        let total = 0;
-        clients.forEach(c => {
-            total += parseFloat(c.total || 0);
-            list.innerHTML += `<div class="client-row">
-                <div><h6 class="mb-0">${c.name}</h6><small class="text-dim">${c.phone}</small></div>
-                <div class="fw-bold text-warning">${c.total}</div>
-            </div>`;
-        });
-        document.getElementById('totalInvestment').innerText = total.toLocaleString() + " ر.س";
-        document.getElementById('clientsCount').innerText = clients.length;
-    }
-
-    window.showSection = (id) => {
-        ['homeSection', 'addClientSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById(id + 'Section').style.display = 'block';
-        document.getElementById('nav-' + id).classList.add('active');
-    };
-
-    document.getElementById('clientForm').onsubmit = async function(e) {
-        e.preventDefault();
-        await addDoc(collection(db, "clients"), {
-            name: document.getElementById('cName').value,
-            phone: document.getElementById('cPhone').value,
-            total: document.getElementById('amount').value,
-            createdAt: new Date().toISOString()
-        });
-        this.reset(); showSection('home');
-    };
 </script>
 </body>
 </html>
