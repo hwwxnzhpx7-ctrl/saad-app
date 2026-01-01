@@ -1,48 +1,4 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | دخول آمن</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root { --bg: #0f1217; --card: #1c2128; --accent: #ff6b35; }
-        body { background-color: var(--bg); color: white; font-family: sans-serif; }
-        .login-box { background: var(--card); border-radius: 20px; padding: 30px; border: 1px solid #333; margin-top: 100px; }
-        .form-control { background: #24292f !important; border: 1px solid #444 !important; color: white !important; text-align: center; border-radius: 12px; margin-bottom: 20px; }
-        .btn-send { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; }
-        #recaptcha-container { margin-top: 15px; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div id="auth-ui" class="col-md-5 login-box text-center">
-            <h4 class="mb-4">دخول النظام (SMS)</h4>
-            
-            <div id="phone-stage">
-                <p class="small text-secondary">سيتم إرسال رمز تحقق لمرة واحدة إلى جوالك</p>
-                <input type="text" id="phone-input" class="form-control" placeholder="0534152055">
-                <button onclick="handleSendOTP()" class="btn-send">إرسال رمز التحقق</button>
-                <div id="recaptcha-container"></div>
-            </div>
-
-            <div id="otp-stage" style="display:none;">
-                <p class="small text-secondary">أدخل الرمز المكون من 6 أرقام</p>
-                <input type="text" id="otp-input" class="form-control" placeholder="••••••">
-                <button onclick="handleVerifyOTP()" class="btn-send">تأكيد الدخول</button>
-                <button onclick="location.reload()" class="btn btn-link text-secondary btn-sm mt-3">رجوع</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
         apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
         authDomain: "myinstallmentsystem.firebaseapp.com",
@@ -52,19 +8,20 @@
     
     firebase.initializeApp(firebaseConfig);
 
-    // تهيئة أداة التحقق (reCAPTCHA) بشكل مرئي لضمان عدم حظر الطلب
+    // استخدام reCAPTCHA المرئي (أكثر أماناً لضمان وصول الرسالة)
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'normal',
-        'callback': (response) => { console.log("reCAPTCHA solved"); }
+        'size': 'normal', // سيظهر مربع "أنا لست برنامج روبوت"
+        'callback': (response) => {
+            console.log("تم التحقق من البشر بنجاح");
+        }
     });
 
     function handleSendOTP() {
         let phoneNumber = document.getElementById('phone-input').value.trim();
         
-        // تنسيق الرقم للسعودية
+        // تنسيق الرقم دولياً
         if(phoneNumber.startsWith('0')) phoneNumber = '+966' + phoneNumber.substring(1);
-        if(!phoneNumber.startsWith('+')) phoneNumber = '+966' + phoneNumber;
-
+        
         const appVerifier = window.recaptchaVerifier;
 
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
@@ -72,12 +29,14 @@
                 window.confirmationResult = confirmationResult;
                 document.getElementById('phone-stage').style.display = 'none';
                 document.getElementById('otp-stage').style.display = 'block';
-                alert("تم إرسال الرمز بنجاح!");
+                alert("انتظر وصول الرسالة على جوالك الآن...");
             }).catch((error) => {
-                console.error("SMS Error:", error);
-                alert("خطأ في الإرسال: " + error.message);
-                // إعادة تحميل الـ reCAPTCHA في حال الخطأ
-                appVerifier.render().then(widgetId => grecaptcha.reset(widgetId));
+                console.error("خطأ الإرسال:", error.code);
+                if(error.code === 'auth/billing-not-enabled') {
+                    alert("تنبيه: جوجل ترفض الإرسال حالياً. تأكد من إضافة رابط موقعك في Authorized Domains داخل Firebase.");
+                } else {
+                    alert("حدث خطأ: " + error.message);
+                }
             });
     }
 
@@ -86,12 +45,11 @@
         window.confirmationResult.confirm(code)
             .then((result) => {
                 alert("تم الدخول بنجاح!");
-                // هنا يتم توجيهك لصفحة النظام الرئيسية
-                window.location.href = "main.html"; // أو تغيير الـ DOM لعرض المحتوى
+                // هنا تضع كود عرض البرنامج الرئيسي
+                document.getElementById('auth-ui').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
             }).catch((error) => {
-                alert("الرمز غير صحيح، حاول مرة أخرى.");
+                alert("الرمز الذي أدخلته غير صحيح");
             });
     }
 </script>
-</body>
-</html>
