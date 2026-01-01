@@ -3,95 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | الإدارة الذكية</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
+    <title>i-System Pro | Alinma Style</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --bg-dark: #0f1217; --card-bg: #1c2128; --accent: #ff6b35; }
-        body { background-color: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif; }
-        .login-card { background: var(--card-bg); border-radius: 20px; padding: 40px; border: 1px solid #333; margin-top: 80px; }
-        .form-control { background: #24292f !important; border: 1px solid #444 !important; color: white !important; border-radius: 12px; padding: 12px; }
-        .btn-main { background: var(--accent); color: white; border: none; border-radius: 12px; padding: 15px; width: 100%; font-weight: bold; }
-        #mainContent { display: none; padding: 20px; }
+        :root {
+            --alinma-bg: #0a2533;       /* الكحلي العميق */
+            --alinma-card: #143747;     /* لون البطاقات */
+            --alinma-accent: #ff8c69;   /* برتقالي الإنماء */
+            --alinma-text: #ffffff;
+            --alinma-muted: #8eabb8;
+            --alinma-success: #2ecc71;
+            --alinma-danger: #e74c3c;
+        }
+
+        body { 
+            background-color: var(--alinma-bg); 
+            color: var(--alinma-text);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin-bottom: 90px;
+        }
+
+        /* تنسيق البطاقات (النمط البنكي) */
+        .stat-card {
+            background: var(--alinma-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .mini-stat {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        /* الأرقام والمبالغ */
+        .amount-display {
+            font-family: 'Tahoma', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control { 
+            background: rgba(255,255,255,0.08) !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important; 
+            border-radius: 10px !important;
+            color: #ffffff !important;
+            padding: 14px !important;
+        }
+
+        .btn-action {
+            background: var(--alinma-accent);
+            color: white; border: none; border-radius: 12px;
+            padding: 14px; font-weight: bold;
+            transition: 0.3s;
+        }
+
+        /* شريط التنقل السفلي الاحترافي */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #0d2d3d;
+            display: flex; justify-content: space-around;
+            padding: 10px 0 25px; 
+            border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 1000;
+        }
+
+        .nav-item { color: var(--alinma-muted); text-decoration: none; text-align: center; flex: 1; font-size: 0.75rem; cursor: pointer; }
+        .nav-item.active { color: var(--alinma-accent); }
+        .nav-item i { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+
+        .client-row {
+            background: var(--alinma-card); border-radius: 12px;
+            margin-bottom: 10px; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .section-title { 
+            color: var(--alinma-accent) !important; 
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div id="loginPage" class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-5 login-card text-center">
-            <h3 class="mb-4">دخول i-System</h3>
-            
-            <div id="phone-box">
-                <input type="text" id="phoneInput" class="form-control text-center fs-5 mb-3" placeholder="0534152055">
-                <button onclick="sendOTP()" class="btn-main">إرسال رمز متغير</button>
-                <div id="recaptcha-container" class="mt-3"></div>
-            </div>
+<div id="loginPage" class="p-4 mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold" style="color: var(--alinma-accent);">i-System</h2>
+        <p class="text-secondary small">Financial Management System</p>
+    </div>
+    <div class="stat-card">
+        <label class="text-center w-100 mb-3" style="color: var(--alinma-muted);">أدخل رمز الوصول الآمن</label>
+        <input type="password" id="passInput" class="form-control text-center mb-4 fs-3" placeholder="••••">
+        <button onclick="login()" class="btn btn-action w-100">دخول</button>
+    </div>
+</div>
 
-            <div id="otp-box" style="display:none;">
-                <input type="text" id="otpInput" class="form-control text-center fs-2 mb-3" placeholder="••••••">
-                <button onclick="verifyOTP()" class="btn-main">تأكيد الرمز</button>
-            </div>
+<div id="mainContent" style="display: none;">
+    <section id="homeSection" class="p-3">
+        <div class="stat-card text-center" style="background: linear-gradient(180deg, #1a4a5e 0%, #143747 100%);">
+            <label class="w-100 small" style="color: var(--alinma-muted);">رصيد المحفظة الاستثمارية</label>
+            <h1 class="amount-display my-2" id="totalInvestment">0</h1>
+            <span class="badge rounded-pill bg-dark py-2 px-3" style="color: var(--alinma-accent);">العملاء: <span id="clientsCount">0</span></span>
         </div>
+
+        <div class="row g-2 mb-4">
+            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">المحصل</small><span id="statCollected" class="amount-display" style="color: var(--alinma-success);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">الأرباح</small><span id="statRealProfit" class="amount-display text-warning">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">المتبقي</small><span id="statRemaining" class="amount-display" style="color: var(--alinma-danger);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">المتعثرين</small><span id="statLateCount" class="amount-display text-white">0</span></div></div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold">قائمة العمليات</h6>
+            <button id="filterLateBtn" class="btn btn-sm text-danger border-0" onclick="toggleLateFilter()">
+                <i class="bi bi-filter"></i> المتأخرين
+            </button>
+        </div>
+        <div id="clientsList"></div>
+    </section>
+
+    <section id="addClientSection" class="p-3" style="display:none;">
+        <h5 class="fw-bold mb-4">فتح ملف جديد</h5>
+        <div class="stat-card">
+            <form id="clientForm">
+                <div class="section-title">المعلومات الشخصية</div>
+                <input type="text" id="cName" class="form-control mb-3" placeholder="اسم العميل" required>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية"></div>
+                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="الجوال"></div>
+                </div>
+                <div class="section-title">التفاصيل المالية</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><input type="number" id="costAmount" class="form-control" placeholder="التكلفة"></div>
+                    <div class="col-6"><input type="number" id="amount" class="form-control" placeholder="مبلغ البيع"></div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><input type="number" id="instCount" class="form-control" placeholder="الأشهر"></div>
+                    <div class="col-6"><input type="date" id="startDate" class="form-control"></div>
+                </div>
+                <button type="submit" class="btn btn-action w-100 mt-3">إعتماد العقد</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="detailsSection" class="p-3" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <i class="bi bi-arrow-right fs-4" onclick="showSection('home')"></i>
+            <h6 class="fw-bold mb-0">كشف الحساب</h6>
+            <i class="bi bi-file-earmark-pdf text-info fs-4" onclick="downloadPDF()"></i>
+        </div>
+        <div id="pdfArea"><div id="clientDetailsContent"></div></div>
+    </section>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-grid-1x2"></i>الرئيسية</div>
+        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-circle"></i>إضافة</div>
+        <div class="nav-item" id="nav-settings" onclick="logout()"><i class="bi bi-gear"></i>خروج</div>
     </div>
 </div>
 
-<div id="mainContent">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4>لوحة التحكم</h4>
-        <button onclick="logout()" class="btn btn-outline-danger btn-sm">خروج</button>
-    </div>
-    <div class="alert alert-dark border-secondary">مرحباً بك.. جاري تحميل البيانات...</div>
-</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-<script>
     const firebaseConfig = {
         apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
         authDomain: "myinstallmentsystem.firebaseapp.com",
         projectId: "myinstallmentsystem",
+        storageBucket: "myinstallmentsystem.firebasestorage.app",
+        messagingSenderId: "1073933519716",
         appId: "1:1073933519716:web:caac200c07e0356f81c871"
     };
-    
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
 
-    // إعداد الـ Recaptcha المرئي لضمان وصول الرسالة في السعودية
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'normal'
-    });
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const clientsCol = collection(db, "clients");
 
-    function sendOTP() {
-        let num = document.getElementById('phoneInput').value.trim();
-        if(num.startsWith('0')) num = '+966' + num.substring(1);
-        
-        auth.signInWithPhoneNumber(num, window.recaptchaVerifier)
-            .then(result => {
-                window.confirmationResult = result;
-                document.getElementById('phone-box').style.display = 'none';
-                document.getElementById('otp-box').style.display = 'block';
-                alert("وصلت الرسالة؟ أدخل الرمز الآن.");
-            }).catch(err => alert("خطأ: " + err.message));
-    }
+    let clients = [];
+    let systemPass = localStorage.getItem('systemPass') || '1955';
+    let showOnlyLate = false;
 
-    function verifyOTP() {
-        const code = document.getElementById('otpInput').value;
-        window.confirmationResult.confirm(code).catch(() => alert("الرمز غير صحيح"));
-    }
-
-    auth.onAuthStateChanged(user => {
-        if (user) {
+    window.login = () => {
+        if (document.getElementById('passInput').value === systemPass) {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
-        }
-    });
+            startListening();
+        } else { alert('خطأ في الرمز'); }
+    }
 
-    function logout() { auth.signOut().then(() => location.reload()); }
+    function startListening() {
+        onSnapshot(clientsCol, (snapshot) => {
+            clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderHome();
+        });
+    }
+
+    window.toggleLateFilter = () => {
+        showOnlyLate = !showOnlyLate;
+        renderHome();
+    };
+
+    window.showSection = (id) => {
+        ['homeSection', 'addClientSection', 'detailsSection'].forEach(s => document.getElementById(s).style.display = 'none');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        const target = document.getElementById(id + 'Section');
+        if(target) target.style.display = 'block';
+        const nav = document.getElementById('nav-' + id);
+        if(nav) nav.classList.add('active');
+        if(id === 'home') renderHome();
+    }
+
+    document.getElementById('clientForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const cost = parseFloat(document.getElementById('costAmount').value);
+        const amount = parseFloat(document.getElementById('amount').value);
+        const count = parseInt(document.getElementById('instCount').value);
+        const date = new Date(document.getElementById('startDate').value);
+        let installments = [];
+        for(let i=0; i<count; i++) {
+            let d = new Date(date); d.setMonth(d.getMonth() + i);
+            installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
+        }
+        await addDoc(clientsCol, {
+            name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
+            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments
+        });
+        this.reset(); showSection('home');
+    };
+
+    function renderHome() {
+        const list = document.getElementById('clientsList');
+        list.innerHTML = '';
+        let totalSales = 0, collected = 0, totalCost = 0, lateCount = 0;
+        const today = new Date().toISOString().split('T')[0];
+
+        clients.forEach(c => {
+            let hasLate = false, clientPaid = 0;
+            c.installments.forEach(inst => {
+                if(inst.status === 'مدفوع') { collected += parseFloat(inst.amount); clientPaid += parseFloat(inst.amount); }
+                else if (inst.dueDate < today) hasLate = true;
+            });
+            if(hasLate) lateCount++;
+            if(showOnlyLate && !hasLate) return;
+            totalSales += parseFloat(c.total); totalCost += parseFloat(c.cost || 0);
+
+            list.innerHTML += `
+                <div class="client-row">
+                    <div><h6 class="mb-0 fw-bold">${c.name}</h6><small style="color:var(--alinma-muted)">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-eye text-info fs-5" onclick="viewClient('${c.id}')"></i>
+                        <i class="bi bi-trash3 text-danger fs-5" onclick="deleteClient('${c.id}')"></i>
+                    </div>
+                </div>`;
+        });
+        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString();
+        document.getElementById('statCollected').innerText = collected.toLocaleString();
+        document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
+        document.getElementById('statLateCount').innerText = lateCount;
+        document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
+        document.getElementById('clientsCount').innerText = clients.length;
+    }
+
+    window.viewClient = (id) => {
+        const client = clients.find(c => c.id === id);
+        let html = `<div class="stat-card">
+            <h5 class="fw-bold">${client.name}</h5>
+            <div class="small mb-3" style="color:var(--alinma-muted)">${client.phone} | ${client.idNum}</div>
+            <table class="table table-dark table-borderless small">
+                <thead><tr class="border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th></tr></thead>
+                <tbody>`;
+        client.installments.forEach((inst, idx) => {
+            const color = inst.status === 'مدفوع' ? 'text-success' : 'text-danger';
+            html += `<tr><td>${inst.dueDate}</td><td>${inst.amount}</td>
+                <td onclick="togglePayment('${id}', ${idx})" style="cursor:pointer" class="${color} fw-bold">${inst.status}</td></tr>`;
+        });
+        document.getElementById('clientDetailsContent').innerHTML = html + `</tbody></table></div>`;
+        showSection('details');
+    };
+
+    window.togglePayment = async (id, idx) => {
+        const c = clients.find(x => x.id === id);
+        c.installments[idx].status = c.installments[idx].status === 'مدفوع' ? 'غير مدفوع' : 'مدفوع';
+        await updateDoc(doc(db, "clients", id), { installments: c.installments });
+        viewClient(id);
+    };
+
+    window.deleteClient = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "clients", id)); };
+    window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Report.pdf'); };
+    window.logout = () => location.reload();
 </script>
 </body>
 </html>
