@@ -17,7 +17,6 @@
         .stat-card { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .mini-stat { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
 
-        /* تعديل الخط ليكون أبيض واضح داخل الجداول والخانات */
         .form-control { 
             background: #24292f !important; border: 1px solid #3d444d !important; 
             border-radius: 12px !important; color: #ffffff !important; padding: 12px !important;
@@ -289,7 +288,8 @@
         const c = clients.find(x => x.id === id);
         const inst = c.installments[idx];
         let phone = c.phone.startsWith('05') ? '966' + c.phone.substring(1) : c.phone;
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent('نذكرك بقسطك المستحق بتاريخ ' + inst.dueDate + ' بمبلغ ' + inst.amount)}`, '_blank');
+        const msg = `السلام عليكم ورحمة الله وبركاته \n\n نود تذكيرك بالقسط الشهري \n وجزاك الله خير`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     };
 
     window.togglePayment = async (id, idx) => {
