@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | التقسيط الذكي</title>
+    <title>i-System Pro | دخول آمن</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -101,12 +101,13 @@
 <div id="loginPage" class="p-4 mt-5">
     <div class="stat-card text-center shadow-lg">
         <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
+            <i class="bi bi-google text-white fs-2"></i>
         </div>
-        <h4 class="fw-bold">نظام i-System</h4>
-        <label class="mt-2 text-center w-100">الرجاء إدخال رمز الوصول</label>
-        <input type="password" id="passInput" class="form-control text-center my-4 fs-4" placeholder="••••">
-        <button onclick="login()" class="btn btn-action w-100">تسجيل الدخول</button>
+        <h4 class="fw-bold">دخول النظام الآمن</h4>
+        <p class="text-dim small">يرجى تسجيل الدخول بحساب Google المصرح له</p>
+        <button onclick="loginWithGoogle()" class="btn btn-light w-100 fw-bold py-3 mt-3 shadow-sm rounded-pill">
+            <i class="bi bi-google me-2 text-danger"></i> الدخول عبر Google
+        </button>
     </div>
 </div>
 
@@ -145,8 +146,6 @@
                     <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية" required></div>
                     <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
                 </div>
-                <div class="section-title">بيانات الكفيل</div>
-                <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
                 <div class="section-title">الخطة المالية</div>
                 <label>سعر الشراء (التكلفة)</label>
                 <input type="number" id="costAmount" class="form-control mb-3" required>
@@ -172,23 +171,23 @@
 
     <section id="settingsSection" class="p-3" style="display:none;">
         <div class="stat-card text-center">
-            <h6>إعدادات الأمان</h6>
-            <input type="password" id="newPass" class="form-control my-3 text-center" placeholder="رمز جديد">
-            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الرمز</button>
-            <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج</button>
+            <h6>إعدادات الحساب</h6>
+            <div id="userInfo" class="my-4"></div>
+            <button onclick="logout()" class="btn btn-outline-danger w-100 border-0">تسجيل خروج</button>
         </div>
     </section>
 
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door-fill"></i>الرئيسية</div>
         <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square-fill"></i>إضافة</div>
-        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-shield-lock-fill"></i>الأمان</div>
+        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-person-fill"></i>الحساب</div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCsF-OsbE075c0lwhhcOj6GIHdUZAfCHCU",
@@ -201,19 +200,38 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
     const clientsCol = collection(db, "clients");
 
+    const ADMIN_EMAIL = "cssp2015@gmail.com";
     let clients = [];
-    let systemPass = localStorage.getItem('systemPass') || '1955';
     let showOnlyLate = false;
 
-    window.login = () => {
-        if (document.getElementById('passInput').value === systemPass) {
+    // دالة الدخول عبر قوقل
+    window.loginWithGoogle = () => {
+        signInWithPopup(auth, provider).then((result) => {
+            if (result.user.email !== ADMIN_EMAIL) {
+                alert("عذراً، هذا الحساب غير مصرح له.");
+                signOut(auth);
+            }
+        }).catch(err => alert("خطأ في الدخول: " + err.message));
+    };
+
+    // مراقبة حالة الدخول
+    onAuthStateChanged(auth, (user) => {
+        if (user && user.email === ADMIN_EMAIL) {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('userInfo').innerHTML = `<img src="${user.photoURL}" class="rounded-circle mb-2" width="60"><br><b>${user.displayName}</b><br><small class="text-dim">${user.email}</small>`;
             startListening();
-        } else { alert('خطأ في الرمز'); }
-    }
+        } else {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+    });
+
+    window.logout = () => signOut(auth).then(() => location.reload());
 
     function startListening() {
         onSnapshot(clientsCol, (snapshot) => {
@@ -222,6 +240,7 @@
         });
     }
 
+    // --- باقي الدوال البرمجية (renderHome, viewClient, etc.) تبقى كما هي ---
     window.toggleLateFilter = () => {
         showOnlyLate = !showOnlyLate;
         const btn = document.getElementById('filterLateBtn');
@@ -232,7 +251,10 @@
     };
 
     window.showSection = (id) => {
-        ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
+        ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => {
+            const el = document.getElementById(s);
+            if(el) el.style.display = 'none';
+        });
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById(id + 'Section').style.display = 'block';
         document.getElementById('nav-' + id).classList.add('active');
@@ -325,8 +347,6 @@
 
     window.deleteClient = async (id) => { if(confirm("حذف نهائي؟")) await deleteDoc(doc(db, "clients", id)); };
     window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
-    window.changePassword = () => { localStorage.setItem('systemPass', document.getElementById('newPass').value); alert('تم التحديث'); };
-    window.logout = () => location.reload();
 </script>
 </body>
 </html>
