@@ -52,7 +52,7 @@
             <i class="bi bi-google text-white fs-1"></i>
         </div>
         <h3 class="fw-bold mb-2">تقسيط سعد</h3>
-        <p class="text-dim mb-5">يرجى تسجيل الدخول بحسابك المعتمد</p>
+        <p class="text-dim mb-5">يرجى تسجيل الدخول بحساب المالك (cssp2015)</p>
         
         <button onclick="loginWithGoogle()" class="btn btn-google shadow-sm">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="24">
@@ -139,7 +139,7 @@
     <section id="settingsSection" class="p-3" style="display:none;">
         <div class="stat-card text-center">
             <h6>إدارة الحساب</h6>
-            <p class="text-dim small mt-2">أنت مسجل دخول عبر جوجل</p>
+            <p class="text-dim small mt-2" id="userDisplayEmail">تحقق من الحساب...</p>
             <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج من النظام</button>
         </div>
     </section>
@@ -172,18 +172,25 @@
     const clientsCol = collection(db, "clients");
 
     let clients = [];
+    
+    // الإيميل المسموح له فقط بالدخول
+    const ALLOWED_EMAIL = "cssp2015@gmail.com";
 
-    // وظيفة الدخول عبر جوجل
     window.loginWithGoogle = () => {
         signInWithPopup(auth, provider).catch(e => alert("خطأ في الاتصال بجوجل: " + e.message));
     };
 
-    // مراقبة حالة الدخول (لإخفاء شاشة الدخول تلقائياً)
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            startListening();
+            if (user.email === ALLOWED_EMAIL) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('userDisplayEmail').innerText = "مرحباً بك: " + user.email;
+                startListening();
+            } else {
+                alert("عذراً، هذا النظام خاص بسعد فقط. سيتم تسجيل خروجك.");
+                signOut(auth);
+            }
         } else {
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('mainContent').style.display = 'none';
