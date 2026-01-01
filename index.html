@@ -3,55 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | Al Rajhi Style</title>
+    <title>i-System Pro | التقسيط الذكي</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* نمط الراجحي الأسود الفاخر */
         :root {
-            --alrajhi-bg: #000000;
-            --alrajhi-card: #151515;
-            --alrajhi-blue: #0066ff;
-            --alrajhi-text: #ffffff;
-            --alrajhi-muted: #888888;
-            --alrajhi-success: #2ecc71;
-            --alrajhi-danger: #e74c3c;
+            --bg-dark: #0f1217;
+            --card-bg: #1c2128;
+            --accent-orange: #ff6b35; 
+            --text-main: #ffffff;
+            --text-dim: #e0e0e0; 
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
         }
 
         body { 
-            background-color: var(--alrajhi-bg); 
-            color: var(--alrajhi-text);
+            background-color: var(--bg-dark); 
+            color: var(--text-main);
             font-family: 'Segoe UI', Roboto, sans-serif;
             margin-bottom: 90px;
         }
 
         .stat-card {
-            background: var(--alrajhi-card);
-            border-radius: 18px;
+            background: var(--card-bg);
+            border-radius: 20px;
             padding: 20px;
-            border: none;
+            border: 1px solid rgba(255,255,255,0.1);
             margin-bottom: 20px;
         }
 
         .mini-stat {
-            background: #1a1a1a;
-            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
             padding: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        label, .section-title { 
+            color: #ffffff !important; 
+            font-weight: 600 !important;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: block;
         }
 
         .form-control { 
-            background: #1a1a1a !important; 
-            border: 1px solid #333 !important; 
+            background: #24292f !important; 
+            border: 1px solid #3d444d !important; 
             border-radius: 12px !important;
             color: #ffffff !important;
             padding: 12px !important;
         }
 
         .btn-action {
-            background: var(--alrajhi-blue);
+            background: var(--accent-orange);
             color: white; border: none; border-radius: 15px;
             padding: 15px; font-weight: bold;
             font-size: 1.1rem;
@@ -59,40 +66,45 @@
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: #000000;
+            background: rgba(28, 33, 40, 0.98);
+            backdrop-filter: blur(15px);
             display: flex; justify-content: space-around;
-            padding: 12px 0 25px; border-top: 1px solid #222;
+            padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
 
-        .nav-item { color: var(--alrajhi-muted); text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
-        .nav-item.active { color: var(--alrajhi-blue); font-weight: bold; }
+        .nav-item { color: #8b949e; text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
+        .nav-item.active { color: var(--accent-orange); font-weight: bold; }
         .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
 
-        .status-paid { color: var(--alrajhi-success); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 4px 10px; border-radius: 8px; }
-        .status-unpaid { color: var(--alrajhi-danger); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 4px 10px; border-radius: 8px; }
+        .status-paid { color: var(--success-green); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; }
+        .status-unpaid { color: var(--error-red); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; }
 
         .client-row {
-            background: var(--alrajhi-card); border-radius: 15px;
+            background: #24292f; border-radius: 15px;
             margin-bottom: 12px; padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .section-title { 
-            color: var(--alrajhi-blue) !important; 
-            border-right: 4px solid var(--alrajhi-blue); 
+            color: var(--accent-orange) !important; 
+            border-right: 4px solid var(--accent-orange); 
             padding-right: 12px; 
             margin: 20px 0 15px;
             font-size: 1rem;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
 <div id="loginPage" class="p-4 mt-5">
-    <div class="stat-card text-center">
-        <h4 class="fw-bold mb-4">نظام i-System</h4>
+    <div class="stat-card text-center shadow-lg">
+        <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
+        </div>
+        <h4 class="fw-bold">نظام i-System</h4>
+        <label class="mt-2 text-center w-100">الرجاء إدخال رمز الوصول</label>
         <input type="password" id="passInput" class="form-control text-center my-4 fs-4" placeholder="••••">
         <button onclick="login()" class="btn btn-action w-100">تسجيل الدخول</button>
     </div>
@@ -100,18 +112,18 @@
 
 <div id="mainContent" style="display: none;">
     <section id="homeSection" class="p-3">
-        <div class="stat-card text-center" style="background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);">
-            <label class="text-center w-100 small text-secondary">إجمالي المحفظة الاستثمارية</label>
+        <div class="stat-card text-center border-0" style="background: linear-gradient(145deg, #1c2128, #111418);">
+            <label class="text-center w-100">إجمالي المحفظة الاستثمارية</label>
             <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
-            <div class="badge bg-dark p-2 mt-2" style="color: var(--alrajhi-blue);">عدد العملاء: <span id="clientsCount">0</span></div>
+            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">عدد العملاء: <span id="clientsCount">0</span></div>
         </div>
 
         <div class="row g-2 mb-3">
-            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--alrajhi-success);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--alrajhi-danger);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
-            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05);"><small class="text-secondary d-block" style="font-size: 0.7rem;">المتعثرين حالياً</small><span id="statLateCount" class="fw-bold" style="color: var(--alrajhi-danger);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
+            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05);"><small class="text-dim d-block" style="font-size: 0.7rem;">المتعثرين حالياً</small><span id="statLateCount" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
@@ -136,13 +148,13 @@
                 <div class="section-title">بيانات الكفيل</div>
                 <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
                 <div class="section-title">الخطة المالية</div>
-                <label class="small text-secondary mb-1">سعر الشراء (التكلفة)</label>
+                <label>سعر الشراء (التكلفة)</label>
                 <input type="number" id="costAmount" class="form-control mb-3" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><label class="small text-secondary mb-1">مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
-                    <div class="col-6"><label class="small text-secondary mb-1">الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
+                    <div class="col-6"><label>مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
+                    <div class="col-6"><label>الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
                 </div>
-                <label class="small text-secondary mb-1">تاريخ أول قسط</label>
+                <label>تاريخ أول قسط</label>
                 <input type="date" id="startDate" class="form-control mb-4" required>
                 <button type="submit" class="btn btn-action w-100">إعتماد العقد</button>
             </form>
@@ -160,7 +172,7 @@
 
     <section id="settingsSection" class="p-3" style="display:none;">
         <div class="stat-card text-center">
-            <h6 class="mb-4">إعدادات الأمان</h6>
+            <h6>إعدادات الأمان</h6>
             <input type="password" id="newPass" class="form-control my-3 text-center" placeholder="رمز جديد">
             <button onclick="changePassword()" class="btn btn-action w-100">تحديث الرمز</button>
             <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج</button>
@@ -240,8 +252,7 @@
         }
         await addDoc(clientsCol, {
             name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
-            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments,
-            guarantor: document.getElementById('gName').value // التأكد من حفظ الكفيل
+            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments
         });
         this.reset(); showSection('home');
     };
@@ -263,11 +274,11 @@
             totalSales += parseFloat(c.total); totalCost += parseFloat(c.cost || 0);
 
             list.innerHTML += `
-                <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--alrajhi-danger);' : ''}">
-                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-secondary">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
+                <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
+                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-dim">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm text-info fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
-                        <button class="btn btn-sm text-danger fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
                     </div>
                 </div>`;
         });
@@ -277,7 +288,6 @@
         document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString();
         document.getElementById('statLateCount').innerText = lateCount;
         document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
-        document.getElementById('clientsCount').innerText = clients.length;
     }
 
     window.sendWhatsAppReminder = (clientId, instIndex) => {
@@ -290,11 +300,11 @@
 
     window.viewClient = (id) => {
         const client = clients.find(c => c.id === id);
-        let html = `<div class="stat-card border-0">
+        let html = `<div class="stat-card border-0 shadow-lg">
             <h5 class="fw-bold text-white">${client.name}</h5>
-            <div class="small text-secondary mb-3">الجوال: ${client.phone} | الهوية: ${client.idNum}</div>
+            <div class="small text-dim mb-3">الجوال: ${client.phone} | الهوية: ${client.idNum}</div>
             <table class="table table-dark table-borderless small">
-                <thead><tr class="text-secondary border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th><th>تذكير</th></tr></thead>
+                <thead><tr class="text-dim border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th><th>تذكير</th></tr></thead>
                 <tbody>`;
         client.installments.forEach((inst, idx) => {
             const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
