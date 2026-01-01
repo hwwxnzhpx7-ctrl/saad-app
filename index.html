@@ -98,7 +98,11 @@
 </head>
 <body>
 
-<div id="loginPage" class="p-4 mt-5">
+<div id="loadingOverlay" style="position: fixed; inset: 0; background: var(--bg-dark); z-index: 2000; display: flex; align-items: center; justify-content: center;">
+    <div class="spinner-border text-warning" role="status"></div>
+</div>
+
+<div id="loginPage" class="p-4 mt-5" style="display: none;">
     <div class="stat-card text-center shadow-lg">
         <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i class="bi bi-google text-white fs-2"></i>
@@ -208,24 +212,41 @@
     let clients = [];
     let showOnlyLate = false;
 
+    // دالة الدخول
     window.loginWithGoogle = () => {
         signInWithRedirect(auth, provider);
     };
 
-    // مراقبة حالة الدخول مع تنبيهات توضيحية
+    // --- الجزء الجديد: معالجة العودة من صفحة قوقل ---
+    getRedirectResult(auth).then((result) => {
+        if (result?.user) {
+            handleLogin(result.user);
+        }
+    }).catch((error) => {
+        console.error("خطأ في جلب نتيجة الدخول:", error);
+    });
+
+    // دالة التحقق من المستخدم المصرح له
+    function handleLogin(user) {
+        if (user.email === ADMIN_EMAIL) {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('userInfo').innerHTML = `
+                <img src="${user.photoURL}" class="rounded-circle mb-2" width="60" onerror="this.src='https://via.placeholder.com/60'">
+                <br><b>${user.displayName}</b><br><small class="text-dim">${user.email}</small>`;
+            startListening();
+        } else {
+            alert("هذا الحساب غير مصرح له.");
+            signOut(auth);
+        }
+    }
+
+    // مراقبة حالة الدخول باستمرار
     onAuthStateChanged(auth, (user) => {
+        document.getElementById('loadingOverlay').style.display = 'none';
         if (user) {
-            if (user.email === ADMIN_EMAIL) {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('userInfo').innerHTML = `
-                    <img src="${user.photoURL}" class="rounded-circle mb-2" width="60">
-                    <br><b>${user.displayName}</b><br><small class="text-dim">${user.email}</small>`;
-                startListening();
-            } else {
-                alert("تم تسجيل الدخول بـ: " + user.email + "\nهذا الإيميل غير مصرح له بالدخول للنظام.");
-                signOut(auth);
-            }
+            handleLogin(user);
         } else {
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('mainContent').style.display = 'none';
