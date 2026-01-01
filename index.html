@@ -11,18 +11,15 @@
         :root { --bg-dark: #0f1217; --card-bg: #1c2128; --accent-orange: #ff6b35; --text-main: #ffffff; --text-dim: #e0e0e0; --success-green: #2ecc71; --error-red: #e74c3c; }
         body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Segoe UI', Roboto, sans-serif; margin-bottom: 90px; }
         .stat-card { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .mini-stat { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        label, .section-title { color: #ffffff !important; font-weight: 600 !important; font-size: 0.95rem; margin-bottom: 8px; display: block; }
         .form-control { background: #24292f !important; border: 1px solid #3d444d !important; border-radius: 12px !important; color: #ffffff !important; padding: 12px !important; }
-        .btn-action { background: var(--accent-orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; font-size: 1.1rem; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 33, 40, 0.98); backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-item { color: #8b949e; text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
-        .nav-item.active { color: var(--accent-orange); font-weight: bold; }
-        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
-        .status-paid { color: var(--success-green); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; }
-        .status-unpaid { color: var(--error-red); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; }
-        .client-row { background: #24292f; border-radius: 15px; margin-bottom: 12px; padding: 18px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .section-title { color: var(--accent-orange) !important; border-right: 4px solid var(--accent-orange); padding-right: 12px; margin: 20px 0 15px; font-size: 1rem; }
+        .btn-action { background: var(--accent-orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(28, 33, 40, 0.98); backdrop-filter: blur(15px); display: flex; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-item { color: #8b949e; text-align: center; flex: 1; cursor: pointer; font-size: 0.8rem; }
+        .nav-item.active { color: var(--accent-orange); }
+        .nav-item i { font-size: 1.5rem; display: block; }
+        .client-row { background: #24292f; border-radius: 15px; margin-bottom: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .status-paid { color: var(--success-green); background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; }
+        .status-unpaid { color: var(--error-red); background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -30,17 +27,17 @@
 <div id="loginPage" class="p-4 mt-5">
     <div class="stat-card text-center shadow-lg">
         <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i class="bi bi-phone-vibrate text-white fs-2"></i>
+            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
         </div>
-        <h4 class="fw-bold">دخول i-System</h4>
+        <h4 class="fw-bold text-white">دخول i-System</h4>
         <div id="phoneArea">
-            <label class="mt-2 text-center w-100">أدخل رقم الجوال المسجل</label>
-            <input type="text" id="phoneInput" class="form-control text-center my-4 fs-5" placeholder="+966534152055">
-            <button onclick="sendOTP()" class="btn btn-action w-100">أرسل رمز التحقق</button>
+            <label class="mt-2 text-white">أدخل رقم الجوال</label>
+            <input type="text" id="phoneInput" class="form-control text-center my-4 fs-5" placeholder="0534152055">
+            <button onclick="sendOTP()" class="btn btn-action w-100">تحقق من الرقم</button>
             <div id="recaptcha-container" class="mt-3"></div>
         </div>
         <div id="otpArea" style="display: none;">
-            <label class="mt-2 text-center w-100">أدخل الرمز المكون من 6 أرقام</label>
+            <label class="mt-2 text-white">أدخل الكود (112233)</label>
             <input type="text" id="otpInput" class="form-control text-center my-4 fs-4" placeholder="••••••">
             <button onclick="verifyOTP()" class="btn btn-action w-100">تأكيد الدخول</button>
         </div>
@@ -50,15 +47,8 @@
 <div id="mainContent" style="display: none;">
     <section id="homeSection" class="p-3">
         <div class="stat-card text-center border-0" style="background: linear-gradient(145deg, #1c2128, #111418);">
-            <label class="text-center w-100">إجمالي المحفظة الاستثمارية</label>
+            <label class="text-white">إجمالي المحفظة</label>
             <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
-            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">عدد العملاء: <span id="clientsCount">0</span></div>
-        </div>
-        <div class="row g-2 mb-3">
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
         </div>
         <div id="clientsList" class="mt-4"></div>
     </section>
@@ -87,7 +77,6 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // الرقم المسموح له بالدخول
     const ADMIN_PHONE = "+966534152055";
 
     window.setupRecaptcha = () => {
@@ -98,9 +87,9 @@
 
     window.sendOTP = () => {
         let phone = document.getElementById('phoneInput').value.trim();
-        // تصحيح الرقم تلقائياً إذا بدأ بـ 05
         if(phone.startsWith('05')) phone = '+966' + phone.substring(1);
-        
+        if(phone === '534152055') phone = '+966534152055';
+
         if (phone !== ADMIN_PHONE) {
             alert("هذا الرقم غير مصرح له");
             return;
@@ -139,7 +128,7 @@
             snap.forEach(doc => {
                 const c = doc.data();
                 total += parseFloat(c.total || 0);
-                list.innerHTML += `<div class="client-row"><div><h6>${c.name}</h6></div><div class="fw-bold text-warning">${c.total}</div></div>`;
+                list.innerHTML += `<div class="client-row"><div><h6 class="text-white">${c.name}</h6></div><div class="fw-bold text-warning">${c.total}</div></div>`;
             });
             document.getElementById('totalInvestment').innerText = total.toLocaleString() + ' ر.س';
         });
