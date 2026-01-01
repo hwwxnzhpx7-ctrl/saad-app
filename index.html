@@ -33,7 +33,6 @@
             margin-bottom: 20px;
         }
 
-        /* تنسيق الإحصائيات الجديدة */
         .mini-stat {
             background: rgba(255,255,255,0.03);
             border-radius: 15px;
@@ -48,7 +47,6 @@
             font-size: 0.95rem;
             margin-bottom: 8px;
             display: block;
-            opacity: 1 !important;
         }
 
         .form-control { 
@@ -87,7 +85,6 @@
             margin-bottom: 12px; padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s;
         }
 
         .section-title { 
@@ -122,15 +119,15 @@
         </div>
 
         <div class="row g-2 mb-3">
-            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الدخل المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
             <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
             <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
             <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
-            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05); border: 1px solid rgba(231, 76, 60, 0.2);"><small class="text-dim d-block" style="font-size: 0.7rem;">إجمالي المتعثرين (أقساط فات موعدها)</small><span id="statLateCount" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
+            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05);"><small class="text-dim d-block" style="font-size: 0.7rem;">المتعثرين حالياً</small><span id="statLateCount" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-            <h6 class="fw-bold mb-0"><i class="bi bi-people-fill me-2"></i> سجل العملاء</h6>
+            <h6 class="fw-bold mb-0">سجل العملاء</h6>
             <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">
                 <i class="bi bi-exclamation-triangle-fill"></i> المتأخرين
             </button>
@@ -142,31 +139,24 @@
         <h5 class="fw-bold mb-3">فتح ملف استثماري</h5>
         <div class="stat-card">
             <form id="clientForm">
-                <div class="section-title">بيانات العميل الأساسية</div>
-                <label>الاسم الرباعي</label>
-                <input type="text" id="cName" class="form-control mb-3" placeholder="أدخل اسم العميل" required>
+                <div class="section-title">بيانات العميل</div>
+                <input type="text" id="cName" class="form-control mb-3" placeholder="الاسم الرباعي" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><label>رقم الهوية</label><input type="text" id="cID" class="form-control" placeholder="10xxxxxxxx" required></div>
-                    <div class="col-6"><label>رقم الجوال</label><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
+                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية" required></div>
+                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
                 </div>
-
-                <div class="section-title">معلومات الكفيل الضامن</div>
+                <div class="section-title">بيانات الكفيل</div>
                 <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
-                <div class="row g-2 mb-3">
-                    <div class="col-6"><label>هوية الكفيل</label><input type="text" id="gID" class="form-control"></div>
-                    <div class="col-6"><label>جوال الكفيل</label><input type="text" id="gPhone" class="form-control"></div>
-                </div>
-
                 <div class="section-title">الخطة المالية</div>
-                <div class="row g-2 mb-2">
-                    <div class="col-12"><label>سعر الشراء (التكلفة عليك)</label><input type="number" id="costAmount" class="form-control mb-3" placeholder="0.00" required></div>
-                    <div class="col-6"><label>مبلغ البيع (الإجمالي)</label><input type="number" id="amount" class="form-control" placeholder="0.00" required></div>
-                    <div class="col-6"><label>مدة الأقساط (أشهر)</label><input type="number" id="instCount" class="form-control" placeholder="12" required></div>
+                <label>سعر الشراء (التكلفة)</label>
+                <input type="number" id="costAmount" class="form-control mb-3" required>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label>مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
+                    <div class="col-6"><label>الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
                 </div>
-                <label>تاريخ استحقاق أول قسط</label>
+                <label>تاريخ أول قسط</label>
                 <input type="date" id="startDate" class="form-control mb-4" required>
-                
-                <button type="submit" class="btn btn-action w-100 shadow">إعتماد العميل والجدولة</button>
+                <button type="submit" class="btn btn-action w-100">إعتماد العقد</button>
             </form>
         </div>
     </section>
@@ -174,22 +164,19 @@
     <section id="detailsSection" class="p-3" style="display:none;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <button class="btn btn-dark rounded-circle" onclick="showSection('home')"><i class="bi bi-chevron-right text-white"></i></button>
-            <h6 class="fw-bold mb-0">كشف حساب إلكتروني</h6>
-            <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf-fill me-1"></i> PDF</button>
+            <h6 class="fw-bold mb-0">كشف حساب</h6>
+            <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</button>
         </div>
-        <div id="pdfArea">
-            <div id="clientDetailsContent"></div>
-        </div>
+        <div id="pdfArea"><div id="clientDetailsContent"></div></div>
     </section>
 
     <section id="settingsSection" class="p-3" style="display:none;">
-        <div class="stat-card">
-            <h6 class="fw-bold mb-4"><i class="bi bi-key-fill me-2 text-warning"></i> حماية النظام</h6>
-            <label>تغيير رمز المرور الحالي</label>
-            <input type="password" id="newPass" class="form-control mb-3 text-center" placeholder="أدخل الرمز الجديد">
-            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الأمان</button>
+        <div class="stat-card text-center">
+            <h6>إعدادات الأمان</h6>
+            <input type="password" id="newPass" class="form-control my-3 text-center" placeholder="رمز جديد">
+            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الرمز</button>
+            <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج</button>
         </div>
-        <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0 shadow-sm"><i class="bi bi-box-arrow-left me-2"></i> تسجيل الخروج</button>
     </section>
 
     <div class="bottom-nav">
@@ -225,7 +212,7 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             startListening();
-        } else { alert('عذراً، الرمز غير صحيح'); }
+        } else { alert('خطأ في الرمز'); }
     }
 
     function startListening() {
@@ -238,22 +225,18 @@
     window.toggleLateFilter = () => {
         showOnlyLate = !showOnlyLate;
         const btn = document.getElementById('filterLateBtn');
-        if(showOnlyLate) {
-            btn.classList.replace('btn-outline-danger', 'btn-danger');
-            btn.innerHTML = 'عرض الكل';
-        } else {
-            btn.classList.replace('btn-danger', 'btn-outline-danger');
-            btn.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> المتأخرين';
-        }
+        btn.classList.toggle('btn-danger', showOnlyLate);
+        btn.classList.toggle('btn-outline-danger', !showOnlyLate);
+        btn.innerHTML = showOnlyLate ? 'عرض الكل' : '<i class="bi bi-exclamation-triangle-fill"></i> المتأخرين';
         renderHome();
     };
 
-    window.showSection = (sectionId) => {
+    window.showSection = (id) => {
         ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById(sectionId + 'Section').style.display = 'block';
-        if(document.getElementById('nav-' + sectionId)) document.getElementById('nav-' + sectionId).classList.add('active');
-        if(sectionId === 'home') renderHome();
+        document.getElementById(id + 'Section').style.display = 'block';
+        document.getElementById('nav-' + id).classList.add('active');
+        if(id === 'home') renderHome();
     }
 
     document.getElementById('clientForm').onsubmit = async function(e) {
@@ -262,34 +245,16 @@
         const amount = parseFloat(document.getElementById('amount').value);
         const count = parseInt(document.getElementById('instCount').value);
         const date = new Date(document.getElementById('startDate').value);
-        
         let installments = [];
         for(let i=0; i<count; i++) {
-            let d = new Date(date);
-            d.setMonth(d.getMonth() + i);
+            let d = new Date(date); d.setMonth(d.getMonth() + i);
             installments.push({ dueDate: d.toISOString().split('T')[0], amount: (amount / count).toFixed(2), status: 'غير مدفوع' });
         }
-
-        const newClient = {
-            name: document.getElementById('cName').value,
-            idNum: document.getElementById('cID').value,
-            phone: document.getElementById('cPhone').value,
-            gName: document.getElementById('gName').value,
-            gID: document.getElementById('gID').value,
-            gPhone: document.getElementById('gPhone').value,
-            cost: cost,
-            total: amount,
-            installments: installments
-        };
-
-        try {
-            await addDoc(clientsCol, newClient);
-            alert('تم اعتماد العميل وحفظه سحابياً بنجاح');
-            this.reset();
-            window.showSection('home');
-        } catch(err) {
-            alert('خطأ في حفظ البيانات');
-        }
+        await addDoc(clientsCol, {
+            name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
+            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments
+        });
+        this.reset(); showSection('home');
     };
 
     function renderHome() {
@@ -299,107 +264,69 @@
         const today = new Date().toISOString().split('T')[0];
 
         clients.forEach(c => {
-            let hasLate = false;
-            let clientPaid = 0;
-
+            let hasLate = false, clientPaid = 0;
             c.installments.forEach(inst => {
-                if(inst.status === 'مدفوع') {
-                    collected += parseFloat(inst.amount);
-                    clientPaid += parseFloat(inst.amount);
-                } else if (inst.dueDate < today) {
-                    hasLate = true;
-                }
+                if(inst.status === 'مدفوع') { collected += parseFloat(inst.amount); clientPaid += parseFloat(inst.amount); }
+                else if (inst.dueDate < today) hasLate = true;
             });
-
             if(hasLate) lateCount++;
             if(showOnlyLate && !hasLate) return;
-
-            totalSales += parseFloat(c.total);
-            totalCost += parseFloat(c.cost || 0);
+            totalSales += parseFloat(c.total); totalCost += parseFloat(c.cost || 0);
 
             list.innerHTML += `
-                <div class="client-row shadow-sm" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
-                    <div>
-                        <h6 class="mb-0 fw-bold text-white">${c.name} ${hasLate ? '<span class="badge bg-danger ms-1" style="font-size: 10px;">متأخر</span>' : ''}</h6>
-                        <small class="text-dim">المتبقي: ${(c.total - clientPaid).toLocaleString()} ر.س</small>
-                    </div>
+                <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
+                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-dim">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
                         <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
                     </div>
                 </div>`;
         });
-
         document.getElementById('totalInvestment').innerText = totalSales.toLocaleString() + ' ر.س';
-        document.getElementById('clientsCount').innerText = clients.length;
-        document.getElementById('statCollected').innerText = collected.toLocaleString() + ' ر.س';
-        document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString() + ' ر.س';
-        document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString() + ' ر.س';
-        document.getElementById('statLateCount').innerText = lateCount + " عملاء";
-        
-        let realProfit = collected > totalCost ? collected - totalCost : 0;
-        document.getElementById('statRealProfit').innerText = realProfit.toLocaleString() + ' ر.س';
+        document.getElementById('statCollected').innerText = collected.toLocaleString();
+        document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
+        document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString();
+        document.getElementById('statLateCount').innerText = lateCount;
+        document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
     }
+
+    window.sendWhatsAppReminder = (clientId, instIndex) => {
+        const c = clients.find(x => x.id === clientId);
+        const inst = c.installments[instIndex];
+        let phone = c.phone.startsWith('05') ? '966' + c.phone.substring(1) : c.phone;
+        const msg = `أخي ${c.name}، نذكرك بقسط استحق بتاريخ ${inst.dueDate} بمبلغ ${inst.amount} ر.س.`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    };
 
     window.viewClient = (id) => {
         const client = clients.find(c => c.id === id);
-        let html = `
-            <div class="stat-card border-0 shadow-lg">
-                <h5 class="fw-bold text-white mb-2">${client.name}</h5>
-                <div class="row g-2 small text-dim mb-3 border-bottom border-secondary pb-3">
-                    <div class="col-6">الهوية: ${client.idNum}</div><div class="col-6 text-start">الجوال: ${client.phone}</div>
-                </div>
-                <div class="p-3 rounded bg-dark border border-secondary mb-3 shadow-inner">
-                    <label class="text-orange d-block mb-2 fw-bold" style="color: var(--accent-orange);">بيانات الضامن (الكفيل)</label>
-                    <div class="small text-white">الاسم: ${client.gName || 'غير متوفر'}</div>
-                    <div class="small text-white">الجوال: ${client.gPhone || 'غير متوفر'} | الهوية: ${client.gID || 'غير متوفر'}</div>
-                </div>
-                <table class="table table-dark table-borderless small mt-4">
-                    <thead><tr class="text-dim border-bottom border-secondary"><th>الاستحقاق</th><th>المبلغ</th><th>الحالة</th></tr></thead>
-                    <tbody>`;
-        client.installments.forEach((inst, index) => {
+        let html = `<div class="stat-card border-0 shadow-lg">
+            <h5 class="fw-bold text-white">${client.name}</h5>
+            <div class="small text-dim mb-3">الجوال: ${client.phone} | الهوية: ${client.idNum}</div>
+            <table class="table table-dark table-borderless small">
+                <thead><tr class="text-dim border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th><th>تذكير</th></tr></thead>
+                <tbody>`;
+        client.installments.forEach((inst, idx) => {
             const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
-            html += `<tr><td class="py-3">${inst.dueDate}</td><td class="py-3">${inst.amount}</td><td class="py-3" onclick="togglePayment('${id}', ${index})" style="cursor:pointer"><span class="${sClass}">${inst.status} <i class="bi bi-arrow-repeat ms-1"></i></span></td></tr>`;
+            html += `<tr><td>${inst.dueDate}</td><td>${inst.amount}</td>
+                <td onclick="togglePayment('${id}', ${idx})" style="cursor:pointer"><span class="${sClass}">${inst.status}</span></td>
+                <td>${inst.status === 'غير مدفوع' ? `<i class="bi bi-whatsapp text-success fs-5" onclick="sendWhatsAppReminder('${id}', ${idx})"></i>` : '✅'}</td></tr>`;
         });
-        html += `</tbody></table></div>`;
-        document.getElementById('clientDetailsContent').innerHTML = html;
-        window.showSection('details');
-    }
+        document.getElementById('clientDetailsContent').innerHTML = html + `</tbody></table></div>`;
+        showSection('details');
+    };
 
-    window.togglePayment = async (clientId, index) => {
-        if(confirm("هل تريد تأكيد تغيير حالة الدفع لهذا القسط؟")) {
-            const client = clients.find(c => c.id === clientId);
-            client.installments[index].status = client.installments[index].status === 'مدفوع' ? 'غير مدفوع' : 'مدفوع';
-            const docRef = doc(db, "clients", clientId);
-            await updateDoc(docRef, { installments: client.installments });
-            window.viewClient(clientId);
-        }
-    }
+    window.togglePayment = async (id, idx) => {
+        const c = clients.find(x => x.id === id);
+        c.installments[idx].status = c.installments[idx].status === 'مدفوع' ? 'غير مدفوع' : 'مدفوع';
+        await updateDoc(doc(db, "clients", id), { installments: c.installments });
+        viewClient(id);
+    };
 
-    window.deleteClient = async (id) => {
-        if(confirm("تحذير: هل أنت متأكد من حذف هذا العميل نهائياً من السحاب؟")) {
-            await deleteDoc(doc(db, "clients", id));
-        }
-    }
-
-    window.downloadPDF = () => {
-        const element = document.getElementById('pdfArea');
-        html2pdf().set({ 
-            margin: 10, 
-            filename: 'Statement_Export.pdf', 
-            html2canvas: { scale: 2, backgroundColor: '#0f1217' }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-        }).from(element).save();
-    }
-
-    window.changePassword = () => {
-        const n = document.getElementById('newPass').value;
-        if(n.length < 4) return alert('خطأ: رمز المرور يجب أن لا يقل عن 4 أرقام');
-        localStorage.setItem('systemPass', n);
-        alert('تم تحديث رمز الحماية بنجاح');
-    }
-
-    window.logout = () => { location.reload(); }
+    window.deleteClient = async (id) => { if(confirm("حذف نهائي؟")) await deleteDoc(doc(db, "clients", id)); };
+    window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
+    window.changePassword = () => { localStorage.setItem('systemPass', document.getElementById('newPass').value); alert('تم التحديث'); };
+    window.logout = () => location.reload();
 </script>
 </body>
 </html>
