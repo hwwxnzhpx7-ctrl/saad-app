@@ -33,6 +33,15 @@
             margin-bottom: 20px;
         }
 
+        /* تنسيق الإحصائيات الجديدة */
+        .mini-stat {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
         label, .section-title { 
             color: #ffffff !important; 
             font-weight: 600 !important;
@@ -78,6 +87,7 @@
             margin-bottom: 12px; padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
             border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
         }
 
         .section-title { 
@@ -110,7 +120,21 @@
             <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
             <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">عدد العملاء: <span id="clientsCount">0</span></div>
         </div>
-        <h6 class="fw-bold mb-3 mt-4"><i class="bi bi-people-fill me-2"></i> سجل العملاء</h6>
+
+        <div class="row g-2 mb-3">
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الدخل المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
+            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05); border: 1px solid rgba(231, 76, 60, 0.2);"><small class="text-dim d-block" style="font-size: 0.7rem;">إجمالي المتعثرين (أقساط فات موعدها)</small><span id="statLateCount" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+            <h6 class="fw-bold mb-0"><i class="bi bi-people-fill me-2"></i> سجل العملاء</h6>
+            <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">
+                <i class="bi bi-exclamation-triangle-fill"></i> المتأخرين
+            </button>
+        </div>
         <div id="clientsList"></div>
     </section>
 
@@ -127,16 +151,16 @@
                 </div>
 
                 <div class="section-title">معلومات الكفيل الضامن</div>
-                <label>اسم الكفيل</label>
-                <input type="text" id="gName" class="form-control mb-3" placeholder="أدخل اسم الكفيل">
+                <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><label>هوية الكفيل</label><input type="text" id="gID" class="form-control" placeholder="هوية الكفيل"></div>
-                    <div class="col-6"><label>جوال الكفيل</label><input type="text" id="gPhone" class="form-control" placeholder="جوال الكفيل"></div>
+                    <div class="col-6"><label>هوية الكفيل</label><input type="text" id="gID" class="form-control"></div>
+                    <div class="col-6"><label>جوال الكفيل</label><input type="text" id="gPhone" class="form-control"></div>
                 </div>
 
                 <div class="section-title">الخطة المالية</div>
                 <div class="row g-2 mb-2">
-                    <div class="col-6"><label>مبلغ الاستثمار</label><input type="number" id="amount" class="form-control" placeholder="0.00" required></div>
+                    <div class="col-12"><label>سعر الشراء (التكلفة عليك)</label><input type="number" id="costAmount" class="form-control mb-3" placeholder="0.00" required></div>
+                    <div class="col-6"><label>مبلغ البيع (الإجمالي)</label><input type="number" id="amount" class="form-control" placeholder="0.00" required></div>
                     <div class="col-6"><label>مدة الأقساط (أشهر)</label><input type="number" id="instCount" class="form-control" placeholder="12" required></div>
                 </div>
                 <label>تاريخ استحقاق أول قسط</label>
@@ -194,6 +218,7 @@
 
     let clients = [];
     let systemPass = localStorage.getItem('systemPass') || '1955';
+    let showOnlyLate = false;
 
     window.login = () => {
         if (document.getElementById('passInput').value === systemPass) {
@@ -210,6 +235,19 @@
         });
     }
 
+    window.toggleLateFilter = () => {
+        showOnlyLate = !showOnlyLate;
+        const btn = document.getElementById('filterLateBtn');
+        if(showOnlyLate) {
+            btn.classList.replace('btn-outline-danger', 'btn-danger');
+            btn.innerHTML = 'عرض الكل';
+        } else {
+            btn.classList.replace('btn-danger', 'btn-outline-danger');
+            btn.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> المتأخرين';
+        }
+        renderHome();
+    };
+
     window.showSection = (sectionId) => {
         ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -220,6 +258,7 @@
 
     document.getElementById('clientForm').onsubmit = async function(e) {
         e.preventDefault();
+        const cost = parseFloat(document.getElementById('costAmount').value);
         const amount = parseFloat(document.getElementById('amount').value);
         const count = parseInt(document.getElementById('instCount').value);
         const date = new Date(document.getElementById('startDate').value);
@@ -238,6 +277,7 @@
             gName: document.getElementById('gName').value,
             gID: document.getElementById('gID').value,
             gPhone: document.getElementById('gPhone').value,
+            cost: cost,
             total: amount,
             installments: installments
         };
@@ -248,27 +288,57 @@
             this.reset();
             window.showSection('home');
         } catch(err) {
-            alert('خطأ في حفظ البيانات سحابياً');
+            alert('خطأ في حفظ البيانات');
         }
     };
 
     function renderHome() {
         const list = document.getElementById('clientsList');
         list.innerHTML = '';
-        let total = 0;
+        let totalSales = 0, collected = 0, totalCost = 0, lateCount = 0;
+        const today = new Date().toISOString().split('T')[0];
+
         clients.forEach(c => {
-            total += parseFloat(c.total);
+            let hasLate = false;
+            let clientPaid = 0;
+
+            c.installments.forEach(inst => {
+                if(inst.status === 'مدفوع') {
+                    collected += parseFloat(inst.amount);
+                    clientPaid += parseFloat(inst.amount);
+                } else if (inst.dueDate < today) {
+                    hasLate = true;
+                }
+            });
+
+            if(hasLate) lateCount++;
+            if(showOnlyLate && !hasLate) return;
+
+            totalSales += parseFloat(c.total);
+            totalCost += parseFloat(c.cost || 0);
+
             list.innerHTML += `
-                <div class="client-row shadow-sm">
-                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-dim">القيمة: ${c.total.toLocaleString()} ر.س</small></div>
+                <div class="client-row shadow-sm" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-white">${c.name} ${hasLate ? '<span class="badge bg-danger ms-1" style="font-size: 10px;">متأخر</span>' : ''}</h6>
+                        <small class="text-dim">المتبقي: ${(c.total - clientPaid).toLocaleString()} ر.س</small>
+                    </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
                         <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
                     </div>
                 </div>`;
         });
-        document.getElementById('totalInvestment').innerText = total.toLocaleString() + ' ر.س';
+
+        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString() + ' ر.س';
         document.getElementById('clientsCount').innerText = clients.length;
+        document.getElementById('statCollected').innerText = collected.toLocaleString() + ' ر.س';
+        document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString() + ' ر.س';
+        document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString() + ' ر.س';
+        document.getElementById('statLateCount').innerText = lateCount + " عملاء";
+        
+        let realProfit = collected > totalCost ? collected - totalCost : 0;
+        document.getElementById('statRealProfit').innerText = realProfit.toLocaleString() + ' ر.س';
     }
 
     window.viewClient = (id) => {
