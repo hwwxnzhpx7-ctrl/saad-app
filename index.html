@@ -3,173 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>i-System Pro | Alinma Style</title>
+    <title>i-System Pro | التقسيط الذكي</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --alinma-bg: #0a2533;       /* الكحلي العميق */
-            --alinma-card: #143747;     /* لون البطاقات */
-            --alinma-accent: #ff8c69;   /* برتقالي الإنماء */
-            --alinma-text: #ffffff;
-            --alinma-muted: #8eabb8;
-            --alinma-success: #2ecc71;
-            --alinma-danger: #e74c3c;
+            --bg-dark: #0f1217;
+            --card-bg: #1c2128;
+            --accent-orange: #ff6b35; 
+            --text-main: #ffffff;
+            --text-dim: #e0e0e0; 
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
         }
 
         body { 
-            background-color: var(--alinma-bg); 
-            color: var(--alinma-text);
+            background-color: var(--bg-dark); 
+            color: var(--text-main);
             font-family: 'Segoe UI', Roboto, sans-serif;
             margin-bottom: 90px;
         }
 
-        /* تنسيق البطاقات (النمط البنكي) */
         .stat-card {
-            background: var(--alinma-card);
-            border-radius: 16px;
-            padding: 24px;
-            border: none;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
             margin-bottom: 20px;
         }
 
         .mini-stat {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.03);
         }
 
-        /* الأرقام والمبالغ */
-        .amount-display {
-            font-family: 'Tahoma', sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+        label, .section-title { 
+            color: #ffffff !important; 
+            font-weight: 600 !important;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: block;
         }
 
         .form-control { 
-            background: rgba(255,255,255,0.08) !important; 
-            border: 1px solid rgba(255,255,255,0.1) !important; 
-            border-radius: 10px !important;
+            background: #24292f !important; 
+            border: 1px solid #3d444d !important; 
+            border-radius: 12px !important;
             color: #ffffff !important;
-            padding: 14px !important;
+            padding: 12px !important;
         }
 
         .btn-action {
-            background: var(--alinma-accent);
-            color: white; border: none; border-radius: 12px;
-            padding: 14px; font-weight: bold;
-            transition: 0.3s;
+            background: var(--accent-orange);
+            color: white; border: none; border-radius: 15px;
+            padding: 15px; font-weight: bold;
+            font-size: 1.1rem;
         }
 
-        /* شريط التنقل السفلي الاحترافي */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: #0d2d3d;
+            background: rgba(28, 33, 40, 0.98);
+            backdrop-filter: blur(15px);
             display: flex; justify-content: space-around;
-            padding: 10px 0 25px; 
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
 
-        .nav-item { color: var(--alinma-muted); text-decoration: none; text-align: center; flex: 1; font-size: 0.75rem; cursor: pointer; }
-        .nav-item.active { color: var(--alinma-accent); }
-        .nav-item i { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+        .nav-item { color: #8b949e; text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
+        .nav-item.active { color: var(--accent-orange); font-weight: bold; }
+        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+
+        .status-paid { color: var(--success-green); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 2px 8px; border-radius: 5px; }
+        .status-unpaid { color: var(--error-red); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 2px 8px; border-radius: 5px; }
 
         .client-row {
-            background: var(--alinma-card); border-radius: 12px;
-            margin-bottom: 10px; padding: 15px 20px;
+            background: #24292f; border-radius: 15px;
+            margin-bottom: 12px; padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .section-title { 
-            color: var(--alinma-accent) !important; 
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            font-weight: bold;
+            color: var(--accent-orange) !important; 
+            border-right: 4px solid var(--accent-orange); 
+            padding-right: 12px; 
+            margin: 20px 0 15px;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
 
 <div id="loginPage" class="p-4 mt-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold" style="color: var(--alinma-accent);">i-System</h2>
-        <p class="text-secondary small">Financial Management System</p>
-    </div>
-    <div class="stat-card">
-        <label class="text-center w-100 mb-3" style="color: var(--alinma-muted);">أدخل رمز الوصول الآمن</label>
-        <input type="password" id="passInput" class="form-control text-center mb-4 fs-3" placeholder="••••">
-        <button onclick="login()" class="btn btn-action w-100">دخول</button>
+    <div class="stat-card text-center shadow-lg">
+        <div style="background: var(--accent-orange); width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="bi bi-shield-lock-fill text-white fs-2"></i>
+        </div>
+        <h4 class="fw-bold">نظام i-System</h4>
+        <label class="mt-2 text-center w-100">الرجاء إدخال رمز الوصول</label>
+        <input type="password" id="passInput" class="form-control text-center my-4 fs-4" placeholder="••••">
+        <button onclick="login()" class="btn btn-action w-100">تسجيل الدخول</button>
     </div>
 </div>
 
 <div id="mainContent" style="display: none;">
     <section id="homeSection" class="p-3">
-        <div class="stat-card text-center" style="background: linear-gradient(180deg, #1a4a5e 0%, #143747 100%);">
-            <label class="w-100 small" style="color: var(--alinma-muted);">رصيد المحفظة الاستثمارية</label>
-            <h1 class="amount-display my-2" id="totalInvestment">0</h1>
-            <span class="badge rounded-pill bg-dark py-2 px-3" style="color: var(--alinma-accent);">العملاء: <span id="clientsCount">0</span></span>
+        <div class="stat-card text-center border-0" style="background: linear-gradient(145deg, #1c2128, #111418);">
+            <label class="text-center w-100">إجمالي المحفظة الاستثمارية</label>
+            <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
+            <div class="badge bg-dark p-2 mt-2" style="color: var(--accent-orange);">عدد العملاء: <span id="clientsCount">0</span></div>
         </div>
 
-        <div class="row g-2 mb-4">
-            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">المحصل</small><span id="statCollected" class="amount-display" style="color: var(--alinma-success);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">الأرباح</small><span id="statRealProfit" class="amount-display text-warning">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">المتبقي</small><span id="statRemaining" class="amount-display" style="color: var(--alinma-danger);">0</span></div></div>
-            <div class="col-6"><div class="mini-stat"><small class="d-block" style="color: var(--alinma-muted);">المتعثرين</small><span id="statLateCount" class="amount-display text-white">0</span></div></div>
+        <div class="row g-2 mb-3">
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--success-green);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-dim d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
+            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05);"><small class="text-dim d-block" style="font-size: 0.7rem;">المتعثرين حالياً</small><span id="statLateCount" class="fw-bold" style="color: var(--error-red);">0</span></div></div>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold">قائمة العمليات</h6>
-            <button id="filterLateBtn" class="btn btn-sm text-danger border-0" onclick="toggleLateFilter()">
-                <i class="bi bi-filter"></i> المتأخرين
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+            <h6 class="fw-bold mb-0">سجل العملاء</h6>
+            <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">
+                <i class="bi bi-exclamation-triangle-fill"></i> المتأخرين
             </button>
         </div>
         <div id="clientsList"></div>
     </section>
 
     <section id="addClientSection" class="p-3" style="display:none;">
-        <h5 class="fw-bold mb-4">فتح ملف جديد</h5>
+        <h5 class="fw-bold mb-3">فتح ملف استثماري</h5>
         <div class="stat-card">
             <form id="clientForm">
-                <div class="section-title">المعلومات الشخصية</div>
-                <input type="text" id="cName" class="form-control mb-3" placeholder="اسم العميل" required>
+                <div class="section-title">بيانات العميل</div>
+                <input type="text" id="cName" class="form-control mb-3" placeholder="الاسم الرباعي" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية"></div>
-                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="الجوال"></div>
+                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية" required></div>
+                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
                 </div>
-                <div class="section-title">التفاصيل المالية</div>
+                <div class="section-title">بيانات الكفيل</div>
+                <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
+                <div class="section-title">الخطة المالية</div>
+                <label>سعر الشراء (التكلفة)</label>
+                <input type="number" id="costAmount" class="form-control mb-3" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="number" id="costAmount" class="form-control" placeholder="التكلفة"></div>
-                    <div class="col-6"><input type="number" id="amount" class="form-control" placeholder="مبلغ البيع"></div>
+                    <div class="col-6"><label>مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
+                    <div class="col-6"><label>الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
                 </div>
-                <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="number" id="instCount" class="form-control" placeholder="الأشهر"></div>
-                    <div class="col-6"><input type="date" id="startDate" class="form-control"></div>
-                </div>
-                <button type="submit" class="btn btn-action w-100 mt-3">إعتماد العقد</button>
+                <label>تاريخ أول قسط</label>
+                <input type="date" id="startDate" class="form-control mb-4" required>
+                <button type="submit" class="btn btn-action w-100">إعتماد العقد</button>
             </form>
         </div>
     </section>
 
     <section id="detailsSection" class="p-3" style="display:none;">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <i class="bi bi-arrow-right fs-4" onclick="showSection('home')"></i>
-            <h6 class="fw-bold mb-0">كشف الحساب</h6>
-            <i class="bi bi-file-earmark-pdf text-info fs-4" onclick="downloadPDF()"></i>
+            <button class="btn btn-dark rounded-circle" onclick="showSection('home')"><i class="bi bi-chevron-right text-white"></i></button>
+            <h6 class="fw-bold mb-0">كشف حساب</h6>
+            <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</button>
         </div>
         <div id="pdfArea"><div id="clientDetailsContent"></div></div>
     </section>
 
+    <section id="settingsSection" class="p-3" style="display:none;">
+        <div class="stat-card text-center">
+            <h6>إعدادات الأمان</h6>
+            <input type="password" id="newPass" class="form-control my-3 text-center" placeholder="رمز جديد">
+            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الرمز</button>
+            <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج</button>
+        </div>
+    </section>
+
     <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-grid-1x2"></i>الرئيسية</div>
-        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-circle"></i>إضافة</div>
-        <div class="nav-item" id="nav-settings" onclick="logout()"><i class="bi bi-gear"></i>خروج</div>
+        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door-fill"></i>الرئيسية</div>
+        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square-fill"></i>إضافة</div>
+        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-shield-lock-fill"></i>الأمان</div>
     </div>
 </div>
 
@@ -211,16 +224,18 @@
 
     window.toggleLateFilter = () => {
         showOnlyLate = !showOnlyLate;
+        const btn = document.getElementById('filterLateBtn');
+        btn.classList.toggle('btn-danger', showOnlyLate);
+        btn.classList.toggle('btn-outline-danger', !showOnlyLate);
+        btn.innerHTML = showOnlyLate ? 'عرض الكل' : '<i class="bi bi-exclamation-triangle-fill"></i> المتأخرين';
         renderHome();
     };
 
     window.showSection = (id) => {
-        ['homeSection', 'addClientSection', 'detailsSection'].forEach(s => document.getElementById(s).style.display = 'none');
+        ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        const target = document.getElementById(id + 'Section');
-        if(target) target.style.display = 'block';
-        const nav = document.getElementById('nav-' + id);
-        if(nav) nav.classList.add('active');
+        document.getElementById(id + 'Section').style.display = 'block';
+        document.getElementById('nav-' + id).classList.add('active');
         if(id === 'home') renderHome();
     }
 
@@ -259,34 +274,43 @@
             totalSales += parseFloat(c.total); totalCost += parseFloat(c.cost || 0);
 
             list.innerHTML += `
-                <div class="client-row">
-                    <div><h6 class="mb-0 fw-bold">${c.name}</h6><small style="color:var(--alinma-muted)">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
-                    <div class="d-flex gap-3">
-                        <i class="bi bi-eye text-info fs-5" onclick="viewClient('${c.id}')"></i>
-                        <i class="bi bi-trash3 text-danger fs-5" onclick="deleteClient('${c.id}')"></i>
+                <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--error-red);' : ''}">
+                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-dim">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-info border-0 fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0 fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
                     </div>
                 </div>`;
         });
-        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString();
+        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString() + ' ر.س';
         document.getElementById('statCollected').innerText = collected.toLocaleString();
         document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
+        document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString();
         document.getElementById('statLateCount').innerText = lateCount;
         document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
-        document.getElementById('clientsCount').innerText = clients.length;
     }
+
+    window.sendWhatsAppReminder = (clientId, instIndex) => {
+        const c = clients.find(x => x.id === clientId);
+        const inst = c.installments[instIndex];
+        let phone = c.phone.startsWith('05') ? '966' + c.phone.substring(1) : c.phone;
+        const msg = `أخي ${c.name}، نذكرك بقسط استحق بتاريخ ${inst.dueDate} بمبلغ ${inst.amount} ر.س.`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    };
 
     window.viewClient = (id) => {
         const client = clients.find(c => c.id === id);
-        let html = `<div class="stat-card">
-            <h5 class="fw-bold">${client.name}</h5>
-            <div class="small mb-3" style="color:var(--alinma-muted)">${client.phone} | ${client.idNum}</div>
+        let html = `<div class="stat-card border-0 shadow-lg">
+            <h5 class="fw-bold text-white">${client.name}</h5>
+            <div class="small text-dim mb-3">الجوال: ${client.phone} | الهوية: ${client.idNum}</div>
             <table class="table table-dark table-borderless small">
-                <thead><tr class="border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th></tr></thead>
+                <thead><tr class="text-dim border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th><th>تذكير</th></tr></thead>
                 <tbody>`;
         client.installments.forEach((inst, idx) => {
-            const color = inst.status === 'مدفوع' ? 'text-success' : 'text-danger';
+            const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
             html += `<tr><td>${inst.dueDate}</td><td>${inst.amount}</td>
-                <td onclick="togglePayment('${id}', ${idx})" style="cursor:pointer" class="${color} fw-bold">${inst.status}</td></tr>`;
+                <td onclick="togglePayment('${id}', ${idx})" style="cursor:pointer"><span class="${sClass}">${inst.status}</span></td>
+                <td>${inst.status === 'غير مدفوع' ? `<i class="bi bi-whatsapp text-success fs-5" onclick="sendWhatsAppReminder('${id}', ${idx})"></i>` : '✅'}</td></tr>`;
         });
         document.getElementById('clientDetailsContent').innerHTML = html + `</tbody></table></div>`;
         showSection('details');
@@ -299,8 +323,9 @@
         viewClient(id);
     };
 
-    window.deleteClient = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "clients", id)); };
-    window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Report.pdf'); };
+    window.deleteClient = async (id) => { if(confirm("حذف نهائي؟")) await deleteDoc(doc(db, "clients", id)); };
+    window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
+    window.changePassword = () => { localStorage.setItem('systemPass', document.getElementById('newPass').value); alert('تم التحديث'); };
     window.logout = () => location.reload();
 </script>
 </body>
