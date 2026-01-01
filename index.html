@@ -8,218 +8,169 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* نمط الراجحي الأسود الفاخر */
         :root {
             --alrajhi-bg: #000000;
             --alrajhi-card: #151515;
             --alrajhi-blue: #0066ff;
-            --alrajhi-light-blue: #5599ff;
             --alrajhi-text: #ffffff;
             --alrajhi-muted: #888888;
-            --alrajhi-success: #27ae60;
-            --alrajhi-danger: #eb5757;
-            --alrajhi-mint: #d1fadc;
-            --alrajhi-mint-text: #1e5631;
+            --alrajhi-success: #2ecc71;
+            --alrajhi-danger: #e74c3c;
         }
 
         body { 
             background-color: var(--alrajhi-bg); 
             color: var(--alrajhi-text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin-bottom: 100px;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin-bottom: 90px;
         }
 
-        /* تنسيق الرصيد الإجمالي */
-        .total-balance-section {
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .balance-label {
-            color: var(--alrajhi-muted);
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .balance-amount {
-            font-size: 2.2rem;
-            font-weight: 700;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .balance-currency {
-            font-size: 1.2rem;
-            margin-right: 5px;
-            color: var(--alrajhi-text);
-        }
-
-        /* البطاقات المستوحاة من صور الراجحي */
-        .alrajhi-card {
+        .stat-card {
             background: var(--alrajhi-card);
             border-radius: 18px;
             padding: 20px;
-            margin-bottom: 15px;
             border: none;
+            margin-bottom: 20px;
         }
 
-        .mini-stat-box {
+        .mini-stat {
             background: #1a1a1a;
             border-radius: 12px;
             padding: 12px;
-            height: 100%;
-            text-align: right;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.03);
         }
 
-        .mini-stat-label {
-            color: var(--alrajhi-muted);
-            font-size: 0.75rem;
-            display: block;
+        .form-control { 
+            background: #1a1a1a !important; 
+            border: 1px solid #333 !important; 
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            padding: 12px !important;
         }
 
-        .mini-stat-value {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 4px;
+        .btn-action {
+            background: var(--alrajhi-blue);
+            color: white; border: none; border-radius: 15px;
+            padding: 15px; font-weight: bold;
+            font-size: 1.1rem;
         }
 
-        /* أزرار العمليات */
-        .btn-alrajhi-primary {
-            background-color: var(--alrajhi-blue);
-            color: white;
-            border-radius: 12px;
-            padding: 12px;
-            font-weight: 600;
-            border: none;
-            width: 100%;
-        }
-
-        .btn-view-status {
-            background: rgba(85, 153, 255, 0.1);
-            color: var(--alrajhi-light-blue);
-            border-radius: 50px;
-            padding: 6px 20px;
-            font-size: 0.85rem;
-            border: none;
-            margin-top: 15px;
-        }
-
-        /* شريط التنقل السفلي - نسخة الراجحي */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: #000000;
             display: flex; justify-content: space-around;
-            padding: 10px 0 25px; 
-            border-top: 1px solid #222;
+            padding: 12px 0 25px; border-top: 1px solid #222;
             z-index: 1000;
         }
 
-        .nav-item { color: var(--alrajhi-muted); text-decoration: none; text-align: center; flex: 1; font-size: 0.7rem; cursor: pointer; }
-        .nav-item.active { color: var(--alrajhi-blue); }
-        .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+        .nav-item { color: var(--alrajhi-muted); text-decoration: none; text-align: center; flex: 1; font-size: 0.8rem; cursor: pointer; }
+        .nav-item.active { color: var(--alrajhi-blue); font-weight: bold; }
+        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
 
-        /* الأقساط */
-        .installment-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #222;
+        .status-paid { color: var(--alrajhi-success); font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 4px 10px; border-radius: 8px; }
+        .status-unpaid { color: var(--alrajhi-danger); font-weight: bold; background: rgba(231, 76, 60, 0.1); padding: 4px 10px; border-radius: 8px; }
+
+        .client-row {
+            background: var(--alrajhi-card); border-radius: 15px;
+            margin-bottom: 12px; padding: 18px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .status-pill {
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.75rem;
+        .section-title { 
+            color: var(--alrajhi-blue) !important; 
+            border-right: 4px solid var(--alrajhi-blue); 
+            padding-right: 12px; 
+            margin: 20px 0 15px;
+            font-size: 1rem;
             font-weight: bold;
-        }
-
-        .paid-pill { background: var(--alrajhi-mint); color: var(--alrajhi-mint-text); }
-        .unpaid-pill { background: rgba(235, 87, 87, 0.1); color: var(--alrajhi-danger); }
-
-        .section-header {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: 25px 0 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .form-control {
-            background: #1a1a1a !important;
-            border: 1px solid #333 !important;
-            color: white !important;
-            border-radius: 12px !important;
-            padding: 12px !important;
         }
     </style>
 </head>
 <body>
 
 <div id="loginPage" class="p-4 mt-5">
-    <div class="text-center mb-5">
-        <h3 class="fw-bold">دخول النظام</h3>
-        <p class="text-secondary small">أدخل رمز الوصول الآمن</p>
-    </div>
-    <div class="alrajhi-card">
-        <input type="password" id="passInput" class="form-control text-center mb-4 fs-3" placeholder="••••">
-        <button onclick="login()" class="btn btn-alrajhi-primary">تسجيل الدخول</button>
+    <div class="stat-card text-center">
+        <h4 class="fw-bold mb-4">نظام i-System</h4>
+        <input type="password" id="passInput" class="form-control text-center my-4 fs-4" placeholder="••••">
+        <button onclick="login()" class="btn btn-action w-100">تسجيل الدخول</button>
     </div>
 </div>
 
 <div id="mainContent" style="display: none;">
     <section id="homeSection" class="p-3">
-        <div class="total-balance-section">
-            <div class="balance-label"><i class="bi bi-eye-slash-fill me-1"></i> الرصيد الإجمالي</div>
-            <div class="balance-amount"><span class="balance-currency">﷼</span><span id="totalInvestment">0</span></div>
-            <button class="btn btn-view-status">عرض الوضع المالي <i class="bi bi-bar-chart-fill ms-1"></i></button>
+        <div class="stat-card text-center" style="background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);">
+            <label class="text-center w-100 small text-secondary">إجمالي المحفظة الاستثمارية</label>
+            <h1 class="fw-bold my-2" id="totalInvestment" style="color: #ffffff;">0</h1>
+            <div class="badge bg-dark p-2 mt-2" style="color: var(--alrajhi-blue);">عدد العملاء: <span id="clientsCount">0</span></div>
         </div>
 
-        <div class="section-header">الحسابات <span class="text-primary small fw-normal">عرض الكل</span></div>
-        
-        <div class="row g-2 mb-4">
-            <div class="col-6"><div class="mini-stat-box"><span class="mini-stat-label">المحصل</span><div class="mini-stat-value text-success" id="statCollected">0</div></div></div>
-            <div class="col-6"><div class="mini-stat-box"><span class="mini-stat-label">الأرباح</span><div class="mini-stat-value text-warning" id="statRealProfit">0</div></div></div>
-            <div class="col-6"><div class="mini-stat-box"><span class="mini-stat-label">المتبقي</span><div class="mini-stat-value text-danger" id="statRemaining">0</div></div></div>
-            <div class="col-6"><div class="mini-stat-box"><span class="mini-stat-label">المتعثرين</span><div class="mini-stat-value" id="statLateCount">0</div></div></div>
+        <div class="row g-2 mb-3">
+            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">المحصل</small><span id="statCollected" class="fw-bold" style="color: var(--alrajhi-success);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">الأرباح الحالية</small><span id="statRealProfit" class="fw-bold" style="color: #f1c40f;">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">المتبقي بالسوق</small><span id="statRemaining" class="fw-bold" style="color: var(--alrajhi-danger);">0</span></div></div>
+            <div class="col-6"><div class="mini-stat"><small class="text-secondary d-block" style="font-size: 0.7rem;">الربح الإجمالي</small><span id="statTotalProfit" class="fw-bold" style="color: #3498db;">0</span></div></div>
+            <div class="col-12"><div class="mini-stat" style="background: rgba(231, 76, 60, 0.05);"><small class="text-secondary d-block" style="font-size: 0.7rem;">المتعثرين حالياً</small><span id="statLateCount" class="fw-bold" style="color: var(--alrajhi-danger);">0</span></div></div>
         </div>
 
-        <div class="section-header">الطلبات <span class="text-primary small fw-normal" onclick="toggleLateFilter()" id="filterLateBtn">تصفية المتأخرين</span></div>
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+            <h6 class="fw-bold mb-0">سجل العملاء</h6>
+            <button id="filterLateBtn" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="toggleLateFilter()">
+                <i class="bi bi-exclamation-triangle-fill"></i> المتأخرين
+            </button>
+        </div>
         <div id="clientsList"></div>
     </section>
 
     <section id="addClientSection" class="p-3" style="display:none;">
-        <h5 class="fw-bold mb-4">فتح ملف استثماري</h5>
-        <div class="alrajhi-card">
+        <h5 class="fw-bold mb-3">فتح ملف استثماري</h5>
+        <div class="stat-card">
             <form id="clientForm">
-                <input type="text" id="cName" class="form-control mb-3" placeholder="الاسم الكامل" required>
+                <div class="section-title">بيانات العميل</div>
+                <input type="text" id="cName" class="form-control mb-3" placeholder="الاسم الرباعي" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية"></div>
-                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="الجوال"></div>
+                    <div class="col-6"><input type="text" id="cID" class="form-control" placeholder="رقم الهوية" required></div>
+                    <div class="col-6"><input type="text" id="cPhone" class="form-control" placeholder="05xxxxxxxx" required></div>
                 </div>
+                <div class="section-title">بيانات الكفيل</div>
+                <input type="text" id="gName" class="form-control mb-3" placeholder="اسم الكفيل">
+                <div class="section-title">الخطة المالية</div>
+                <label class="small text-secondary mb-1">سعر الشراء (التكلفة)</label>
+                <input type="number" id="costAmount" class="form-control mb-3" required>
                 <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="number" id="costAmount" class="form-control" placeholder="التكلفة"></div>
-                    <div class="col-6"><input type="number" id="amount" class="form-control" placeholder="مبلغ البيع"></div>
+                    <div class="col-6"><label class="small text-secondary mb-1">مبلغ البيع</label><input type="number" id="amount" class="form-control" required></div>
+                    <div class="col-6"><label class="small text-secondary mb-1">الأشهر</label><input type="number" id="instCount" class="form-control" required></div>
                 </div>
-                <div class="row g-2 mb-3">
-                    <div class="col-6"><input type="number" id="instCount" class="form-control" placeholder="عدد الأشهر"></div>
-                    <div class="col-6"><input type="date" id="startDate" class="form-control"></div>
-                </div>
-                <button type="submit" class="btn btn-alrajhi-primary mt-3">اعتماد العقد</button>
+                <label class="small text-secondary mb-1">تاريخ أول قسط</label>
+                <input type="date" id="startDate" class="form-control mb-4" required>
+                <button type="submit" class="btn btn-action w-100">إعتماد العقد</button>
             </form>
         </div>
     </section>
 
     <section id="detailsSection" class="p-3" style="display:none;">
-        <div class="d-flex align-items-center mb-4">
-            <i class="bi bi-arrow-right fs-4 me-3" onclick="showSection('home')"></i>
-            <h5 class="fw-bold mb-0">تفاصيل العقد</h5>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <button class="btn btn-dark rounded-circle" onclick="showSection('home')"><i class="bi bi-chevron-right text-white"></i></button>
+            <h6 class="fw-bold mb-0">كشف حساب</h6>
+            <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</button>
         </div>
         <div id="pdfArea"><div id="clientDetailsContent"></div></div>
     </section>
 
+    <section id="settingsSection" class="p-3" style="display:none;">
+        <div class="stat-card text-center">
+            <h6 class="mb-4">إعدادات الأمان</h6>
+            <input type="password" id="newPass" class="form-control my-3 text-center" placeholder="رمز جديد">
+            <button onclick="changePassword()" class="btn btn-action w-100">تحديث الرمز</button>
+            <button onclick="logout()" class="btn btn-outline-danger w-100 mt-4 border-0">تسجيل خروج</button>
+        </div>
+    </section>
+
     <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door"></i>الرئيسية</div>
-        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square"></i>إضافة</div>
-        <div class="nav-item" id="nav-settings" onclick="logout()"><i class="bi bi-box-arrow-right"></i>خروج</div>
+        <div class="nav-item active" id="nav-home" onclick="showSection('home')"><i class="bi bi-house-door-fill"></i>الرئيسية</div>
+        <div class="nav-item" id="nav-add" onclick="showSection('addClient')"><i class="bi bi-plus-square-fill"></i>إضافة</div>
+        <div class="nav-item" id="nav-settings" onclick="showSection('settings')"><i class="bi bi-shield-lock-fill"></i>الأمان</div>
     </div>
 </div>
 
@@ -261,15 +212,18 @@
 
     window.toggleLateFilter = () => {
         showOnlyLate = !showOnlyLate;
-        document.getElementById('filterLateBtn').innerText = showOnlyLate ? "عرض الكل" : "تصفية المتأخرين";
+        const btn = document.getElementById('filterLateBtn');
+        btn.classList.toggle('btn-danger', showOnlyLate);
+        btn.classList.toggle('btn-outline-danger', !showOnlyLate);
+        btn.innerHTML = showOnlyLate ? 'عرض الكل' : '<i class="bi bi-exclamation-triangle-fill"></i> المتأخرين';
         renderHome();
     };
 
     window.showSection = (id) => {
-        ['homeSection', 'addClientSection', 'detailsSection'].forEach(s => document.getElementById(s).style.display = 'none');
+        ['homeSection', 'addClientSection', 'detailsSection', 'settingsSection'].forEach(s => document.getElementById(s).style.display = 'none');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById(id + 'Section').style.display = 'block';
-        document.getElementById('nav-' + (id === 'details' ? 'home' : id)).classList.add('active');
+        document.getElementById('nav-' + id).classList.add('active');
         if(id === 'home') renderHome();
     }
 
@@ -286,7 +240,8 @@
         }
         await addDoc(clientsCol, {
             name: document.getElementById('cName').value, idNum: document.getElementById('cID').value,
-            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments
+            phone: document.getElementById('cPhone').value, cost: cost, total: amount, installments: installments,
+            guarantor: document.getElementById('gName').value // التأكد من حفظ الكفيل
         });
         this.reset(); showSection('home');
     };
@@ -308,43 +263,46 @@
             totalSales += parseFloat(c.total); totalCost += parseFloat(c.cost || 0);
 
             list.innerHTML += `
-                <div class="alrajhi-card d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="fw-bold mb-1">${c.name}</div>
-                        <div class="small text-secondary">الباقي: ${(c.total - clientPaid).toLocaleString()} ﷼</div>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <i class="bi bi-chevron-left text-secondary" onclick="viewClient('${c.id}')"></i>
-                        <i class="bi bi-trash3 text-danger opacity-50" onclick="deleteClient('${c.id}')"></i>
+                <div class="client-row" style="${hasLate ? 'border-right: 5px solid var(--alrajhi-danger);' : ''}">
+                    <div><h6 class="mb-0 fw-bold text-white">${c.name}</h6><small class="text-secondary">الباقي: ${(c.total - clientPaid).toLocaleString()}</small></div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm text-info fs-5" onclick="viewClient('${c.id}')"><i class="bi bi-eye-fill"></i></button>
+                        <button class="btn btn-sm text-danger fs-5" onclick="deleteClient('${c.id}')"><i class="bi bi-trash3-fill"></i></button>
                     </div>
                 </div>`;
         });
-        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString();
+        document.getElementById('totalInvestment').innerText = totalSales.toLocaleString() + ' ر.س';
         document.getElementById('statCollected').innerText = collected.toLocaleString();
         document.getElementById('statRemaining').innerText = (totalSales - collected).toLocaleString();
+        document.getElementById('statTotalProfit').innerText = (totalSales - totalCost).toLocaleString();
         document.getElementById('statLateCount').innerText = lateCount;
         document.getElementById('statRealProfit').innerText = (collected > totalCost ? collected - totalCost : 0).toLocaleString();
+        document.getElementById('clientsCount').innerText = clients.length;
     }
+
+    window.sendWhatsAppReminder = (clientId, instIndex) => {
+        const c = clients.find(x => x.id === clientId);
+        const inst = c.installments[instIndex];
+        let phone = c.phone.startsWith('05') ? '966' + c.phone.substring(1) : c.phone;
+        const msg = `أخي ${c.name}، نذكرك بقسط استحق بتاريخ ${inst.dueDate} بمبلغ ${inst.amount} ر.س.`;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    };
 
     window.viewClient = (id) => {
         const client = clients.find(c => c.id === id);
-        let html = `<div class="alrajhi-card">
-            <h5 class="fw-bold">${client.name}</h5>
-            <div class="small text-secondary mb-3">${client.phone} | ${client.idNum}</div>
-            <div class="mt-4">`;
-        
+        let html = `<div class="stat-card border-0">
+            <h5 class="fw-bold text-white">${client.name}</h5>
+            <div class="small text-secondary mb-3">الجوال: ${client.phone} | الهوية: ${client.idNum}</div>
+            <table class="table table-dark table-borderless small">
+                <thead><tr class="text-secondary border-bottom border-secondary"><th>التاريخ</th><th>المبلغ</th><th>الحالة</th><th>تذكير</th></tr></thead>
+                <tbody>`;
         client.installments.forEach((inst, idx) => {
-            const isPaid = inst.status === 'مدفوع';
-            html += `
-                <div class="installment-row" onclick="togglePayment('${id}', ${idx})">
-                    <div>
-                        <div class="small text-secondary">${inst.dueDate}</div>
-                        <div class="fw-bold mt-1">${parseFloat(inst.amount).toLocaleString()} ﷼</div>
-                    </div>
-                    <span class="status-pill ${isPaid ? 'paid-pill' : 'unpaid-pill'}">${inst.status}</span>
-                </div>`;
+            const sClass = inst.status === 'مدفوع' ? 'status-paid' : 'status-unpaid';
+            html += `<tr><td>${inst.dueDate}</td><td>${inst.amount}</td>
+                <td onclick="togglePayment('${id}', ${idx})" style="cursor:pointer"><span class="${sClass}">${inst.status}</span></td>
+                <td>${inst.status === 'غير مدفوع' ? `<i class="bi bi-whatsapp text-success fs-5" onclick="sendWhatsAppReminder('${id}', ${idx})"></i>` : '✅'}</td></tr>`;
         });
-        document.getElementById('clientDetailsContent').innerHTML = html + `</div></div><button class="btn btn-light w-100 mt-3" onclick="downloadPDF()">تحميل PDF</button>`;
+        document.getElementById('clientDetailsContent').innerHTML = html + `</tbody></table></div>`;
         showSection('details');
     };
 
@@ -355,8 +313,9 @@
         viewClient(id);
     };
 
-    window.deleteClient = async (id) => { if(confirm("حذف العميل نهائياً؟")) await deleteDoc(doc(db, "clients", id)); };
+    window.deleteClient = async (id) => { if(confirm("حذف نهائي؟")) await deleteDoc(doc(db, "clients", id)); };
     window.downloadPDF = () => { html2pdf().from(document.getElementById('pdfArea')).save('Statement.pdf'); };
+    window.changePassword = () => { localStorage.setItem('systemPass', document.getElementById('newPass').value); alert('تم التحديث'); };
     window.logout = () => location.reload();
 </script>
 </body>
